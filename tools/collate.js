@@ -15,7 +15,7 @@ function findTSFiles(dir, files = []) {
     return files;
 }
 
-const tsFiles = findTSFiles('../');
+const tsFiles = findTSFiles('./src');
 let output = '';
 
 for (const file of tsFiles) {
@@ -23,8 +23,6 @@ for (const file of tsFiles) {
     const relativePath = path.relative('.', file);
     const stats = fs.statSync(file);
     output += `=== FILE: ${relativePath} ===\n`;
-    output += `Size: ${stats.size} bytes\n`;
-    output += `Last Modified: ${stats.mtime.toISOString()}\n`;
     output += `--- CONTENT ---\n`;
     output += content + '\n\n';
 }

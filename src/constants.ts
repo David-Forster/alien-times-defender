@@ -123,9 +123,8 @@ export const initialTable = [
 ];
 
 // Game constants
-export const GAME_LENGTH = 2;
+export const GAME_LENGTH = 10;
 export const EARLY_SESSION_THRESHOLD = 3;
-export const ADAPTIVE_THRESHOLD = 30;
 export const TIMER_DELAY_MS = 25000;
 export const TIMER_BAR_WIDTH = 400;
 export const TIMER_BAR_HEIGHT = 20;
@@ -138,12 +137,12 @@ export const PUZZLE_Y = 200;
 export const INPUT_Y = 300;
 export const TIMER_BAR_Y = 150;
 export const FEEDBACK_Y = 400;
-export const FAST_TIME_THRESHOLD = 5;
-export const SLOW_TIME_THRESHOLD = 20;
-export const FAST_DECREASE = -5;
-export const SLOW_DECREASE = -1;
-export const INCORRECT_INCREASE = 5;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
 export const FEEDBACK_DELAY_MS = 2000;
 export const TIMEOUT_TIME = 25;
+
+// Mastery constants
+export const MASTERY_TARGET = 100;
+export const MASTERY_THRESHOLD_FAST = 3.0;   // seconds for "fast"
+export const MASTERY_THRESHOLD_ACCURACY = 0.98; // 98% correct in recent history
