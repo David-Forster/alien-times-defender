@@ -2,10 +2,12 @@ import Phaser from 'phaser';
 import { initialTable, GAME_LENGTH, EARLY_SESSION_THRESHOLD, TIMER_DELAY_MS, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR, PUZZLE_FONT_SIZE, INPUT_FONT_SIZE, FEEDBACK_FONT_SIZE, SCREEN_CENTER_X, PUZZLE_Y, INPUT_Y, TIMER_BAR_Y, FEEDBACK_Y, MIN_RATING, MAX_RATING, FEEDBACK_DELAY_MS, TIMEOUT_TIME } from '../constants';
 import { getPlayerDataKey, initializePlayerData, getActivePlayer } from '../utils/player';
 
+type PuzzleEntry = { puzzle: string; rating: number; userRating: number };
+
 export default class PlayScene extends Phaser.Scene {
-   competencyTable!: Array<{ puzzle: string; rating: number; userRating: number }>;
+   competencyTable!: PuzzleEntry[];
    playCount!: number;
-   puzzles!: Array<{ puzzle: string; rating: number; userRating: number }>;
+   puzzles!: PuzzleEntry[];
    currentIndex!: number;
    deltas!: number[];
    puzzleText!: Phaser.GameObjects.Text;
@@ -56,9 +58,14 @@ export default class PlayScene extends Phaser.Scene {
     this.presentPuzzle();
   }
 
-  private selectPuzzlesAdaptive(competencyTable: Array<{ puzzle: string; rating: number; userRating: number }>, gameLength: number): Array<{ puzzle: string; rating: number; userRating: number }> {
+  private pulloutRandomItem(candidates: PuzzleEntry[]) {
+      const idx = Math.floor(Math.random() * candidates.length);
+      return candidates.splice(idx, 1)[0];    
+  }
+
+  private selectPuzzlesAdaptive(competencyTable: PuzzleEntry[], gameLength: number): PuzzleEntry[] {
     const candidates = [...competencyTable];
-    const selected: typeof competencyTable = [];
+    const selected: PuzzleEntry[] = [];
 
     // Priority: puzzles with userRating 6–15 (almost mastered)
     const nearMastery = candidates
@@ -70,18 +77,26 @@ export default class PlayScene extends Phaser.Scene {
       .sort((a, b) => b.userRating - a.userRating);
 
     // Fill with: 60% near-mastery, 30% weak, 10% random
-    while (selected.length < gameLength && (nearMastery.length > 0 || weak.length > 0)) {
+    while (selected.length < gameLength) {
+      //
       if (selected.length < gameLength * 0.6 && nearMastery.length > 0) {
-        selected.push(nearMastery.shift()!);
-      } else if (selected.length < gameLength * 0.9 && weak.length > 0) {
-        selected.push(weak.shift()!);
-      } else {
-        const remaining = candidates.filter(c => !selected.includes(c));
-        if (remaining.length > 0) {
-          const idx = Math.floor(Math.random() * remaining.length);
-          selected.push(...remaining.splice(idx, 1));
-        }
+        selected.push(this.pulloutRandomItem(nearMastery))
+        continue;
+      } 
+      
+      if (selected.length < gameLength * 0.9 && weak.length > 0) {
+        selected.push(this.pulloutRandomItem(weak))
+        continue;
       }
+
+      const remaining = candidates.filter(c => !selected.includes(c));
+      if (remaining.length === 0) {
+        break;
+      }
+
+      // in ranges 6-, 16..30
+      const idx = Math.floor(Math.random() * remaining.length);
+      selected.push(this.pulloutRandomItem(remaining))
     }
 
     return selected;
