@@ -37,18 +37,28 @@ export default class SummaryScene extends Phaser.Scene {
      this.add.text(400, masteryY - 40, 'Mastery Progress', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
      this.add.rectangle(400, masteryY, 400, 20, 0x666666).setOrigin(0.5);
      this.add.rectangle(200 + (newMastery.masteryScore / 100) * 200, masteryY, 4, 20, 0x00ffff).setOrigin(0.5);
-     this.add.text(400, masteryY + 30, `${newMastery.masteryScore}% (${masteryDelta > 0 ? '+' : ''}${masteryDelta.toFixed(1)})`, {
+     this.add.text(400, masteryY + 30, `${newMastery.masteryScore.toFixed(1)}% (${masteryDelta > 0 ? '+' : ''}${masteryDelta.toFixed(1)})`, {
        fontSize: '16px', color: masteryDelta > 0 ? '#00ff00' : '#ff0000'
      }).setOrigin(0.5);
 
      // Group all puzzles by multiplier
      const groups: { [key: number]: typeof table } = {};
      for (const p of table) {
-       const b = parseInt(p.puzzle.split(' x ')[1]);
+       const b = parseInt(p.puzzle.split(' x ')[0]);
        if (!groups[b]) groups[b] = [];
        groups[b].push(p);
      }
+     // Sort each group's elements from lowest to highest (by the second number)
+     for (const mult in groups) {
+       groups[mult].sort((a, b) => {
+         const aNum = parseInt(a.puzzle.split(' x ')[1]);
+         const bNum = parseInt(b.puzzle.split(' x ')[1]);
+         return aNum - bNum;
+       });
+     }
      const multipliers = Object.keys(groups).map(Number).sort((a, b) => a - b);
+     console.log('multipliers', multipliers)
+     console.log('groups', groups)
 
      // Chart dimensions
      const chartY = 250;
@@ -83,13 +93,16 @@ export default class SummaryScene extends Phaser.Scene {
          graphics.lineTo(lineX, chartBottom - height);
          graphics.strokePath();
          // If tested in session, add a dot below
-         if (presented.some(pr => pr.puzzle === p.puzzle)) {
-           graphics.fillStyle(color);
+         const presentedIndex = presented.findIndex(pr => pr.puzzle === p.puzzle);
+         if (presentedIndex !== -1) {
+           const isCorrect = correctness[presentedIndex];
+           const circleColor = isCorrect ? 0x00ff00 : 0xff0000;
+           graphics.fillStyle(circleColor);
            graphics.fillCircle(lineX, chartBottom + 8, 4);
          }
        });
        // Label multiplier
-       this.add.text(x, chartBottom + 15, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
+       this.add.text(x, 265, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
      });
 
      // Stats panel
