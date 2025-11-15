@@ -9,6 +9,9 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 600,
   parent: 'game-container',
   scene: [MenuScene, PlayScene, SummaryScene],
+  dom: {
+    createContainer: true
+  }
 };
 
 new Phaser.Game(config);

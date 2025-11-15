@@ -1,5 +1,6 @@
 import Phaser from 'phaser';
 import { initialTable, GAME_LENGTH, EARLY_SESSION_THRESHOLD, TIMER_DELAY_MS, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR, PUZZLE_FONT_SIZE, INPUT_FONT_SIZE, FEEDBACK_FONT_SIZE, SCREEN_CENTER_X, PUZZLE_Y, INPUT_Y, TIMER_BAR_Y, FEEDBACK_Y, MIN_RATING, MAX_RATING, FEEDBACK_DELAY_MS, TIMEOUT_TIME } from '../constants';
+import { getPlayerDataKey, initializePlayerData, getActivePlayer } from '../utils/player';
 
 export default class PlayScene extends Phaser.Scene {
    competencyTable!: Array<{ puzzle: string; rating: number; userRating: number }>;
@@ -23,17 +24,21 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   create() {
-    if (localStorage.getItem('competencyTable')) {
-      this.competencyTable = JSON.parse(localStorage.getItem('competencyTable')!);
-    } else {
-      this.competencyTable = initialTable;
+    const player = getActivePlayer();
+    if (!player) {
+      this.scene.start('MenuScene');
+      return;
     }
 
-    this.answerHistory = JSON.parse(localStorage.getItem('answerHistory') || '[]');
+    const tableKey = getPlayerDataKey('competencyTable');
+    const historyKey = getPlayerDataKey('answerHistory');
+    const playCountKey = getPlayerDataKey('playCount');
 
-    this.playCount = parseInt(localStorage.getItem('playCount') || '0');
+    this.competencyTable = JSON.parse(localStorage.getItem(tableKey)!);
+    this.answerHistory = JSON.parse(localStorage.getItem(historyKey) || '[]');
+    this.playCount = parseInt(localStorage.getItem(playCountKey) || '0');
     this.playCount++;
-    localStorage.setItem('playCount', this.playCount.toString());
+    localStorage.setItem(playCountKey, this.playCount.toString());
 
     this.puzzles = [];
 
@@ -173,9 +178,9 @@ export default class PlayScene extends Phaser.Scene {
     });
     // Keep only last 50 answers
     if (this.answerHistory.length > 50) this.answerHistory.shift();
-    localStorage.setItem('answerHistory', JSON.stringify(this.answerHistory));
+    localStorage.setItem(getPlayerDataKey('answerHistory'), JSON.stringify(this.answerHistory));
 
-    localStorage.setItem('competencyTable', JSON.stringify(this.competencyTable));
+    localStorage.setItem(getPlayerDataKey('competencyTable'), JSON.stringify(this.competencyTable));
     this.time.delayedCall(FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
   }
 
@@ -224,9 +229,9 @@ export default class PlayScene extends Phaser.Scene {
     });
     // Keep only last 50 answers
     if (this.answerHistory.length > 50) this.answerHistory.shift();
-    localStorage.setItem('answerHistory', JSON.stringify(this.answerHistory));
+    localStorage.setItem(getPlayerDataKey('answerHistory'), JSON.stringify(this.answerHistory));
 
-    localStorage.setItem('competencyTable', JSON.stringify(this.competencyTable));
+    localStorage.setItem(getPlayerDataKey('competencyTable'), JSON.stringify(this.competencyTable));
     this.time.delayedCall(FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
   }
 
