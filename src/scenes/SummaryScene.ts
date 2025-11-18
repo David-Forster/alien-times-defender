@@ -30,16 +30,29 @@ export default class SummaryScene extends Phaser.Scene {
      const oldMastery = calculateMastery(oldTable, history.slice(0, -data.times.length));
      const newMastery = calculateMastery(table, history);
 
+     // Track highest mastery
+     const currentHighest = parseFloat(localStorage.getItem(getPlayerDataKey('highestMastery')) || '0');
+     if (newMastery.masteryScore > currentHighest) {
+       localStorage.setItem(getPlayerDataKey('highestMastery'), newMastery.masteryScore.toString());
+     }
+
+     const highestMastery = Math.max(currentHighest, newMastery.masteryScore);
+
      const masteryDelta = newMastery.masteryScore - oldMastery.masteryScore;
+     
+     // console log all key mastery metrics
+     console.log(`highestMastery:${highestMastery}, newMastry:${newMastery.masteryScore}`)
+     
 
      // Mastery Progress Bar
      const masteryY = 200;
      this.add.text(400, masteryY - 40, 'Mastery Progress', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
      this.add.rectangle(400, masteryY, 400, 20, 0x666666).setOrigin(0.5);
-     this.add.rectangle(200 + (newMastery.masteryScore / 100) * 200, masteryY, 4, 20, 0x00ffff).setOrigin(0.5);
+     this.add.rectangle(200 + (newMastery.masteryScore / 100) * 200, masteryY, (newMastery.masteryScore / 100) * 400, 20, 0x00ffff).setOrigin(0.5);
      this.add.text(400, masteryY + 30, `${newMastery.masteryScore.toFixed(1)}% (${masteryDelta > 0 ? '+' : ''}${masteryDelta.toFixed(1)})`, {
-       fontSize: '16px', color: masteryDelta > 0 ? '#00ff00' : '#ff0000'
+       fontSize: '24px', color: masteryDelta > 0 ? '#00ff00' : '#ff0000'
      }).setOrigin(0.5);
+     this.add.rectangle(200 + (highestMastery / 100) * 400, masteryY, 4, 22, 0xffffff).setOrigin(0.5);
 
      // Group all puzzles by multiplier
      const groups: { [key: number]: typeof table } = {};
@@ -106,8 +119,8 @@ export default class SummaryScene extends Phaser.Scene {
      });
 
      // Stats panel
-     this.add.text(400, 380, `Accuracy: ${(accuracy * 100).toFixed(1)}%`, { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5);
-     this.add.text(400, 410, `Average Time: ${avgTime.toFixed(1)}s`, { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(280, 380, `Accuracy: ${(accuracy * 100).toFixed(1)}%`, { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(520, 380, `Average Time: ${avgTime.toFixed(1)}s`, { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
 
      const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
      restartButton.on('pointerdown', () => {

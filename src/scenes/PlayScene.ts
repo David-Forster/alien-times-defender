@@ -79,7 +79,7 @@ export default class PlayScene extends Phaser.Scene {
     // Fill with: 60% near-mastery, 30% weak, 10% random
     while (selected.length < gameLength) {
       //
-      if (selected.length < gameLength * 0.6 && nearMastery.length > 0) {
+      if (selected.length < gameLength * 0.7 && nearMastery.length > 0) {
         selected.push(this.pulloutRandomItem(nearMastery))
         continue;
       } 
@@ -104,7 +104,7 @@ export default class PlayScene extends Phaser.Scene {
 
   presentPuzzle() {
     const puzzle = this.puzzles[this.currentIndex];
-    this.puzzleText = this.add.text(SCREEN_CENTER_X, PUZZLE_Y, puzzle.puzzle + ' = ', { fontSize: PUZZLE_FONT_SIZE, color: '#ffffff' }).setOrigin(0.5);
+    this.puzzleText = this.add.text(SCREEN_CENTER_X, PUZZLE_Y, puzzle.puzzle, { fontSize: PUZZLE_FONT_SIZE, color: '#ffffff' }).setOrigin(0.5);
     this.inputText = this.add.text(SCREEN_CENTER_X, INPUT_Y, '', { fontSize: INPUT_FONT_SIZE, color: '#ffffff' }).setOrigin(0.5);
     this.answer = '';
     this.startTime = Date.now();
@@ -131,6 +131,18 @@ export default class PlayScene extends Phaser.Scene {
     }
   }
 
+  getCorrectDelta(timeTaken: number): number {
+    if (timeTaken <= 2.0) return -8;
+    if (timeTaken <= 3.0) return -6;
+    if (timeTaken <= 5.0) return -4;
+    if (timeTaken <= 10.0) return -2;
+    return -1; // slow correct → minimal gain
+  }
+
+  getIncorrectDelta(currentRating: number) {
+     return currentRating <= 20 ? 8 : 12;
+  }
+
   submitAnswer() {
     this.input.keyboard.off('keydown', this.handleKey, this);
     this.timerEvent.remove();
@@ -146,19 +158,9 @@ export default class PlayScene extends Phaser.Scene {
     const oldRating = entry.userRating;
 
     // === NEW DYNAMIC LOSS FUNCTION ===
-    let delta = 0;
+    const delta = isCorrect ? this.getCorrectDelta(timeTaken) 
+      : this.getIncorrectDelta(entry.userRating);
 
-    if (isCorrect) {
-      // Fast → big confidence gain
-      if (timeTaken <= 2.0) delta = -8;
-      else if (timeTaken <= 3.0) delta = -6;
-      else if (timeTaken <= 5.0) delta = -4;
-      else if (timeTaken <= 10.0) delta = -2;
-      else delta = -1; // slow correct → minimal gain
-    } else {
-      // Wrong → penalty scales with confidence (overconfidence hurts more)
-      delta = entry.userRating <= 20 ? 8 : 12;
-    }
 
     // Apply bounds
     entry.userRating = Math.min(MAX_RATING, Math.max(MIN_RATING, entry.userRating + delta));
@@ -172,7 +174,7 @@ export default class PlayScene extends Phaser.Scene {
 
     // Add floating delta
     const deltaText = this.add.text(
-      SCREEN_CENTER_X + 100,
+      SCREEN_CENTER_X + 130,
       INPUT_Y,
       `${delta > 0 ? '+' : ''}${delta}`,
       { fontSize: '32px', color: delta < 0 ? '#00ff00' : '#ff0000' }
