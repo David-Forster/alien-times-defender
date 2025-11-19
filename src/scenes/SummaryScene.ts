@@ -9,11 +9,9 @@ export default class SummaryScene extends Phaser.Scene {
 
    create(data: { deltas: number[]; presented: Array<{ puzzle: string; rating: number; userRating: number }>; times: number[]; correctness: boolean[] }) {
      const { deltas, presented, times, correctness } = data;
-     const accuracy = correctness.filter(c => c).length / correctness.length;
-     const avgTime = times.reduce((sum, t) => sum + t, 0) / times.length;
 
-     this.add.text(400, 60, `Summary for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
-     this.add.text(400, 100, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
 
      // Load full table and history
      const table = JSON.parse(localStorage.getItem(getPlayerDataKey('competencyTable'))!);
@@ -46,13 +44,29 @@ export default class SummaryScene extends Phaser.Scene {
 
      // Mastery Progress Bar
      const masteryY = 200;
+     const masteryDeltaLabel = masteryDelta == 0 ? 'no change from previous session'
+      : masteryDelta > 0 ? `up ${masteryDelta.toFixed(0)}% from previous session`
+      : `down ${Math.abs(masteryDelta).toFixed(0)}% from previous session`;
      this.add.text(400, masteryY - 40, 'Mastery Progress', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
      this.add.rectangle(400, masteryY, 400, 20, 0x666666).setOrigin(0.5);
      this.add.rectangle(200 + (newMastery.masteryScore / 100) * 200, masteryY, (newMastery.masteryScore / 100) * 400, 20, 0x00ffff).setOrigin(0.5);
-     this.add.text(400, masteryY + 30, `${newMastery.masteryScore.toFixed(1)}% (${masteryDelta > 0 ? '+' : ''}${masteryDelta.toFixed(1)})`, {
-       fontSize: '24px', color: masteryDelta > 0 ? '#00ff00' : '#ff0000'
+     const percentageText = `${newMastery.masteryScore.toFixed(1)}%`;
+     const textX = 200 + (newMastery.masteryScore / 100) * 400 - 10;
+     this.add.text(textX, masteryY, percentageText, { fontSize: '16px', color: '#000000' }).setOrigin(1, 0.5);
+     this.add.text(400, masteryY + 30, masteryDeltaLabel, {
+       fontSize: '14px', color: masteryDelta == 0 ? '#ffffff' : masteryDelta > 0 ? '#00ff00' : '#ff0000'
      }).setOrigin(0.5);
-     this.add.rectangle(200 + (highestMastery / 100) * 400, masteryY, 4, 22, 0xffffff).setOrigin(0.5);
+     this.add.rectangle(200 + (highestMastery / 100) * 400, masteryY, 2, 22, 0x0080ff).setOrigin(0.5);
+
+     // Add label for highest mastery
+     const lineX = 200 + (highestMastery / 100) * 400;
+     let labelX = lineX;
+     if (highestMastery > 80) labelX -= 50;
+     const labelY = masteryY - 20;
+     const labelText = `Highest: ${highestMastery.toFixed(1)}%`;
+     const label = this.add.text(labelX, labelY, labelText, { fontSize: '14px', color: '#0080ff' }).setOrigin(0.5);
+     const bg = this.add.rectangle(labelX, labelY, label.width + 10, label.height + 4, 0x000000, 0.5).setOrigin(0.5);
+     bg.setDepth(label.depth - 1);
 
      // Group all puzzles by multiplier
      const groups: { [key: number]: typeof table } = {};
@@ -111,16 +125,20 @@ export default class SummaryScene extends Phaser.Scene {
            const isCorrect = correctness[presentedIndex];
            const circleColor = isCorrect ? 0x00ff00 : 0xff0000;
            graphics.fillStyle(circleColor);
-           graphics.fillCircle(lineX, chartBottom + 8, 4);
+           graphics.fillCircle(lineX, chartBottom + 20, 4);
          }
        });
+       // Vertical dashed line at beginning of multiplier group
+       graphics.lineStyle(1, 0xffffff, 0.5);
+       for (let yy = chartY; yy < chartBottom; yy += 6) {
+         graphics.beginPath();
+         graphics.moveTo(startX, yy);
+         graphics.lineTo(startX, Math.min(yy + 3, chartBottom));
+         graphics.strokePath();
+       }
        // Label multiplier
-       this.add.text(x, 265, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
+       this.add.text(x, 360, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
      });
-
-     // Stats panel
-     this.add.text(280, 380, `Accuracy: ${(accuracy * 100).toFixed(1)}%`, { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
-     this.add.text(520, 380, `Average Time: ${avgTime.toFixed(1)}s`, { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
 
      const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
      restartButton.on('pointerdown', () => {
