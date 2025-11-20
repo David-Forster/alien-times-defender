@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { FEEDBACK_DELAY_MS, TIMEOUT_TIME, GT_X, GT_Y, INPUT_Y, SCREEN_CENTER_X, FEEDBACK_Y } from '../constants';
+import { CORRECT_FEEDBACK_DELAY_MS, TIMEOUT_TIME, GT_X, GT_Y, INPUT_Y, SCREEN_CENTER_X, FEEDBACK_Y, INCORRECT_FEEDBACK_DELAY_MS } from '../constants';
 import { PuzzleManager } from './PuzzleManager';
 import { UIManager } from './UIManager';
 import { GameMechanics } from './GameMechanics';
@@ -32,10 +32,10 @@ export class InputHandler {
   handleKey(event: KeyboardEvent) {
     if (event.key >= '0' && event.key <= '9') {
       this.answer += event.key;
-      this.uiManager.inputText.setText(this.answer);
+      this.uiManager.setInputText(this.answer);
     } else if (event.key === 'Backspace') {
       this.answer = this.answer.slice(0, -1);
-      this.uiManager.inputText.setText(this.answer);
+      this.uiManager.setInputText(this.answer);
     } else if (event.key === 'Enter') {
       this.submitAnswer();
     }
@@ -61,11 +61,11 @@ export class InputHandler {
     } else {
       this.gameMechanics.explodeGunTurret();
       this.gameMechanics.loseLife(this.puzzleManager, this.uiManager);
-      this.uiManager.showFeedback(`Overheated!! Correct sequence was: ${correct}`, '#ff0000', INPUT_Y);
+      this.uiManager.showFeedback(`Overheated!! Correct sequence was: ${correct}`, '#ffffff', INPUT_Y);
       this.uiManager.showDeltaText(delta, this.uiManager.gunTurret.x + 130, this.uiManager.gunTurret.y);
     }
 
-    this.scene.time.delayedCall(FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
+    this.scene.time.delayedCall(isCorrect ? CORRECT_FEEDBACK_DELAY_MS : INCORRECT_FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
   }
 
   onTimeout() {
@@ -86,11 +86,11 @@ export class InputHandler {
 
     const [a, b] = puzzle.puzzle.split(' x ').map(Number);
     const correct = a * b;
-    this.uiManager.showFeedback(`Overheated!! Correct sequence was: ${correct}`, '#ff0000', INPUT_Y);
+    this.uiManager.showFeedback(`Overheated!! Correct sequence was: ${correct}`, '#ffffff', INPUT_Y);
 
     this.uiManager.showDeltaText(delta, this.uiManager.puzzleShip.x + 100, this.uiManager.puzzleShip.y);
 
-    this.scene.time.delayedCall(FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
+    this.scene.time.delayedCall(INCORRECT_FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
   }
 
   nextPuzzle() {

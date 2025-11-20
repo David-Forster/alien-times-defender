@@ -127,7 +127,7 @@ export const GAME_LENGTH = 10;
 export const EARLY_SESSION_THRESHOLD = 3;
 export const TIMER_DELAY_MS = 25000;
 export const TIMER_BAR_WIDTH = 400;
-export const TIMER_BAR_HEIGHT = 20;
+export const TIMER_BAR_HEIGHT = 5;
 export const TIMER_BAR_COLOR = 0x00ff00;
 export const PUZZLE_FONT_SIZE = '48px';
 export const INPUT_FONT_SIZE = '128px';
@@ -139,7 +139,8 @@ export const TIMER_BAR_Y = 30;
 export const FEEDBACK_Y = 400;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
-export const FEEDBACK_DELAY_MS = 2000;
+export const CORRECT_FEEDBACK_DELAY_MS = 1500;
+export const INCORRECT_FEEDBACK_DELAY_MS = 4000;
 export const TIMEOUT_TIME = 25;
 
 // Mastery constants

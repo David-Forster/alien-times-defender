@@ -11,6 +11,7 @@ export default class PlayScene extends Phaser.Scene {
   uiManager!: UIManager;
   gameMechanics!: GameMechanics;
   inputHandler!: InputHandler;
+  stars!: Phaser.GameObjects.Blitter;
 
   constructor() {
     super('PlayScene');
@@ -31,6 +32,9 @@ export default class PlayScene extends Phaser.Scene {
       frameHeight: 24
     });
     this.load.image('bullet', 'src/assets/bullet7.png');
+    this.load.image('starfield', 'src/assets/starfield.png');
+    this.load.image('button_panel', 'src/assets/textinput_button_rectangle_gradient.svg');
+    this.load.image('feedback_panel', 'src/assets/button_rectangle_flat.svg');
   }
 
   create() {
@@ -39,6 +43,12 @@ export default class PlayScene extends Phaser.Scene {
       this.scene.start('MenuScene');
       return;
     }
+
+    this.stars = this.add.blitter(0, 0, 'starfield');
+    this.stars.create(0, 0);
+    this.stars.create(512, 0);
+    this.stars.create(0, -512);
+    this.stars.create(512, -512);
 
     this.puzzleManager = new PuzzleManager();
     this.puzzleManager.loadData();
@@ -62,5 +72,8 @@ export default class PlayScene extends Phaser.Scene {
     if (this.uiManager && this.uiManager.timerEvent && this.uiManager.timerEvent.getRemaining() < TIMER_DELAY_MS * 0.5) {
       this.uiManager.updatePuzzleShipPosition(this.uiManager.timerEvent);
     }
+
+    this.stars.y += 1;
+    this.stars.y %= 512;
   }
 }

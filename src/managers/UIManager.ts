@@ -4,8 +4,11 @@ import { PUZZLE_FONT_SIZE, INPUT_FONT_SIZE, FEEDBACK_FONT_SIZE, SCREEN_CENTER_X,
 export class UIManager {
   scene: Phaser.Scene;
   puzzleText!: Phaser.GameObjects.Text;
+  inputContainer!: Phaser.GameObjects.Container;
+  inputPanelSprite!: Phaser.GameObjects.Sprite;
   inputText!: Phaser.GameObjects.Text;
   feedbackText!: Phaser.GameObjects.Text;
+  feedbackContainer!: Phaser.GameObjects.Container;
   feedbackAdded: boolean;
   timerBar!: Phaser.GameObjects.Rectangle;
   timerEvent!: Phaser.Time.TimerEvent;
@@ -74,7 +77,14 @@ export class UIManager {
       repeat: -1
     });
 
-    this.inputText = this.scene.add.text(GT_X + 200, GT_Y - 120, '', { fontSize: INPUT_FONT_SIZE, color: '#ffffff' }).setOrigin(0.5);
+    this.inputContainer = this.scene.add.container(GT_X + 200, GT_Y - 120);
+    this.inputPanelSprite = this.scene.add.sprite(0, 0, 'button_panel');
+    this.inputPanelSprite.setScale(1, 2); // Make it taller to exceed font size
+    this.inputPanelSprite.setAlpha(0.7); // Make translucent
+    this.inputPanelSprite.setVisible(false); // Hide initially since no text
+    this.inputContainer.add(this.inputPanelSprite);
+    this.inputText = this.scene.add.text(0, 0, '', { fontSize: INPUT_FONT_SIZE, color: '#ffffff', fontFamily: 'monospace', stroke: '#000000', strokeThickness: 4 }).setOrigin(0.5);
+    this.inputContainer.add(this.inputText);
     this.timerBar = this.scene.add.rectangle(SCREEN_CENTER_X, TIMER_BAR_Y, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR).setOrigin(0.5);
     this.timerBar.setDepth(1);
     this.scene.tweens.add({
@@ -83,6 +93,23 @@ export class UIManager {
       duration: TIMER_DELAY_MS,
       ease: 'Linear',
     });
+  }
+
+  setInputText(text: string) {
+    this.inputText.setText(text);
+    if (text.length > 0) {
+      this.inputPanelSprite.setVisible(true);
+      this.updateInputPanelSize();
+    } else {
+      this.inputPanelSprite.setVisible(false);
+    }
+  }
+
+  updateInputPanelSize() {
+    const textWidth = this.inputText.width;
+    const baseWidth = 192; // SVG width
+    const scaleX = Math.max(1, textWidth / baseWidth * 1.2); // Add some padding
+    this.inputPanelSprite.setScale(scaleX, 2); // Keep height scaled to exceed font size
   }
 
   startTimer(callback: () => void) {
@@ -108,8 +135,32 @@ export class UIManager {
   }
 
   showFeedback(text: string, color: string, y: number = FEEDBACK_Y) {
-    this.feedbackText = this.scene.add.text(SCREEN_CENTER_X, y, text, { fontSize: FEEDBACK_FONT_SIZE, color }).setOrigin(0.5);
+    // Hide input panel and text
+    this.inputContainer.setVisible(false);
+
+    this.feedbackContainer = this.scene.add.container(SCREEN_CENTER_X, y);
+    const panelSprite = this.scene.add.sprite(0, 0, 'feedback_panel').setScale(2); // Double the size
+    // Split text: assume format "Overheated!! Correct sequence was: X"
+    const parts = text.split(' Correct sequence was: ');
+    const topText = parts[0] + ' Correct sequence was:';
+    const bottomText = parts[1];
+    const topTextObj = this.scene.add.text(0, -30, topText, { fontSize: '20px', color, fontFamily: 'Arial' }).setOrigin(0.5);
+    const bottomTextObj = this.scene.add.text(0, 20, bottomText, { fontSize: '48px', color, fontFamily: 'Arial' }).setOrigin(0.5);
+    this.feedbackContainer.add(panelSprite);
+    this.feedbackContainer.add(topTextObj);
+    this.feedbackContainer.add(bottomTextObj);
+    this.feedbackContainer.setDepth(15);
     this.feedbackAdded = true;
+
+    // Blink the panel a couple of times quickly
+    this.scene.tweens.add({
+      targets: this.feedbackContainer,
+      alpha: 0,
+      duration: 100,
+      yoyo: true,
+      repeat: 3,
+      ease: 'Linear'
+    });
   }
 
   showDeltaText(delta: number, x: number, y: number) {
@@ -131,10 +182,10 @@ export class UIManager {
     console.log('before:', this.puzzleText);
     this.puzzleText.destroy();
     console.log('after:', this.puzzleText);
-    this.inputText.destroy();
+    this.inputContainer.destroy();
     this.timerBar.destroy();
     if (this.feedbackAdded) {
-      this.feedbackText.destroy();
+      this.feedbackContainer.destroy();
       this.feedbackAdded = false;
     }
     this.puzzleShip.destroy();
