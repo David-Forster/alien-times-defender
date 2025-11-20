@@ -135,7 +135,7 @@ export const FEEDBACK_FONT_SIZE = '24px';
 export const SCREEN_CENTER_X = 400;
 export const PUZZLE_Y = 200;
 export const INPUT_Y = 300;
-export const TIMER_BAR_Y = 150;
+export const TIMER_BAR_Y = 30;
 export const FEEDBACK_Y = 400;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
@@ -146,3 +146,43 @@ export const TIMEOUT_TIME = 25;
 export const MASTERY_TARGET = 100;
 export const MASTERY_THRESHOLD_FAST = 3.0;   // seconds for "fast"
 export const MASTERY_THRESHOLD_ACCURACY = 0.98; // 98% correct in recent history
+
+// UX Improvement Constants
+export const GT_X = 400; // Gun Turret X position (center)
+export const GT_Y = 550; // Gun Turret Y position (bottom)
+export const PS_START_Y = 100; // Puzzle Ship initial Y
+export const PS_MOVE_SPEED = 50; // pixels per second for erratic movement
+export const MISSILE_SPEED = 1200; // pixels per second
+export const SWOOP_SPEED = 200; // pixels per second for timeout swoop
+export const LIVES_COUNT = 3;
+export const LIFE_ICON_SIZE = 32;
+export const LIFE_ICON_SPACING = 40;
+export const PROGRESS_X = 750;
+export const PROGRESS_Y = 30;
+
+// Explosion variations based on time
+export const EXPLOSION_INSTANT_DURATION = 500; // ms
+export const EXPLOSION_INSTANT_PARTICLES = 50;
+export const EXPLOSION_INSTANT_COLOR = 0xffffff; // bright white
+export const EXPLOSION_VERY_FAST_DURATION = 600;
+export const EXPLOSION_VERY_FAST_PARTICLES = 40;
+export const EXPLOSION_VERY_FAST_COLOR = 0xffff00; // yellow
+export const EXPLOSION_FAST_DURATION = 700;
+export const EXPLOSION_FAST_PARTICLES = 30;
+export const EXPLOSION_FAST_COLOR = 0xffa500; // orange
+export const EXPLOSION_MEDIUM_DURATION = 800;
+export const EXPLOSION_MEDIUM_PARTICLES = 20;
+export const EXPLOSION_MEDIUM_COLOR = 0xff4500; // red-orange
+export const EXPLOSION_SLOW_DURATION = 1000;
+export const EXPLOSION_SLOW_PARTICLES = 10;
+export const EXPLOSION_SLOW_COLOR = 0x8b0000; // dark red
+
+// Overheat explosion (incorrect answer)
+export const OVERHEAT_DURATION = 600;
+export const OVERHEAT_PARTICLES = 30;
+export const OVERHEAT_COLOR = 0xff0000; // red
+
+// Collision explosion (timeout)
+export const COLLISION_DURATION = 800;
+export const COLLISION_PARTICLES = 40;
+export const COLLISION_COLOR = 0xff4500; // orange-red

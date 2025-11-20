@@ -9,6 +9,12 @@ const config: Phaser.Types.Core.GameConfig = {
   height: 600,
   parent: 'game-container',
   scene: [MenuScene, PlayScene, SummaryScene],
+  physics: {
+    default: 'arcade',
+    arcade: {
+      debug: false
+    }
+  },
   dom: {
     createContainer: true
   }
