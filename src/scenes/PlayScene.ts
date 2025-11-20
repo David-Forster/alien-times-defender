@@ -33,8 +33,8 @@ export default class PlayScene extends Phaser.Scene {
     });
     this.load.image('bullet', 'src/assets/bullet7.png');
     this.load.image('starfield', 'src/assets/starfield.png');
-    this.load.image('button_panel', 'src/assets/textinput_button_rectangle_gradient.svg');
-    this.load.image('feedback_panel', 'src/assets/button_rectangle_flat.svg');
+    this.load.image('button_panel', 'src/assets/blue_panel.svg');
+    this.load.image('feedback_panel', 'src/assets/red_panel.svg');
   }
 
   create() {

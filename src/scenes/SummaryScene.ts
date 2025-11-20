@@ -7,11 +7,23 @@ export default class SummaryScene extends Phaser.Scene {
      super('SummaryScene');
    }
 
+   stars!: Phaser.GameObjects.Blitter;
+
+   preload() {
+     this.load.image('starfield', 'src/assets/starfield.png');
+   }
+
    create(data: { deltas: number[]; presented: Array<{ puzzle: string; rating: number; userRating: number }>; times: number[]; correctness: boolean[] }) {
      const { deltas, presented, times, correctness } = data;
 
      this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
      this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
+
+     this.stars = this.add.blitter(0, 0, 'starfield');
+     this.stars.create(0, 0);
+     this.stars.create(512, 0);
+     this.stars.create(0, -512);
+     this.stars.create(512, -512);
 
      // Load full table and history
      const table = JSON.parse(localStorage.getItem(getPlayerDataKey('competencyTable'))!);
@@ -150,4 +162,8 @@ export default class SummaryScene extends Phaser.Scene {
        this.scene.start('MenuScene');
      });
    }
+    update() {
+      this.stars.y += 1;
+      this.stars.y %= 512;
+    }
 }

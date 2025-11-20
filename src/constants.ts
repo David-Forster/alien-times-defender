@@ -140,7 +140,7 @@ export const FEEDBACK_Y = 400;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
 export const CORRECT_FEEDBACK_DELAY_MS = 1500;
-export const INCORRECT_FEEDBACK_DELAY_MS = 4000;
+export const INCORRECT_FEEDBACK_DELAY_MS = 3000;
 export const TIMEOUT_TIME = 25;
 
 // Mastery constants

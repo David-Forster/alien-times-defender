@@ -164,10 +164,15 @@ export class UIManager {
   }
 
   showDeltaText(delta: number, x: number, y: number) {
-    const deltaText = this.scene.add.text(x, y, `${delta > 0 ? '+' : ''}${delta}`, { fontSize: '32px', color: delta < 0 ? '#00ff00' : '#ff0000' }).setOrigin(0.5);
+    const isCorrect = delta < 0;
+    const displayText = isCorrect ? `+${Math.abs(delta)}` : `-${delta}`;
+    const color = isCorrect ? '#00ff00' : '#ff0000';
+    const targetY = isCorrect ? y - 50 : y + 50;
+    const deltaText = this.scene.add.text(x, y, displayText, { fontSize: '32px', color }).setOrigin(0.5);
     this.scene.tweens.add({
       targets: deltaText,
-      y: y - 50,
+      x: x + 40,
+      y: targetY,
       alpha: 0,
       duration: 1000,
       onComplete: () => deltaText.destroy()

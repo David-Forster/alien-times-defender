@@ -8,11 +8,23 @@ export default class MenuScene extends Phaser.Scene {
      super('MenuScene');
    }
 
+   stars!: Phaser.GameObjects.Blitter;
+
+   preload() {
+     this.load.image('starfield', 'src/assets/starfield.png');
+   }
+
    create() {
      if (getPlayerList().length === 0) {
        // Auto-create default player on first launch
        addPlayer('Player 1');
      }
+
+     this.stars = this.add.blitter(0, 0, 'starfield');
+     this.stars.create(0, 0);
+     this.stars.create(512, 0);
+     this.stars.create(0, -512);
+     this.stars.create(512, -512);
 
      this.add.text(400, 100, 'Multiplication Tables Trainer', { fontSize: '36px', color: '#ffffff' }).setOrigin(0.5);
 
@@ -117,4 +129,8 @@ export default class MenuScene extends Phaser.Scene {
        this.add.text(400, 500, 'Create or select a player to begin', { fontSize: '18px', color: '#aaaaaa' }).setOrigin(0.5);
      }
    }
+    update() {
+      this.stars.y += 1;
+      this.stars.y %= 512;
+    }
 }
