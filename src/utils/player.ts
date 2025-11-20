@@ -1,17 +1,17 @@
 // src/utils/player.ts
 import { initialTable } from '../constants';
+import { playerStatePersistence } from './playerStatePersistence';
 
 export type Player = {
   name: string;
 };
 
 export const getPlayerList = (): string[] => {
-  const list = localStorage.getItem('playerList');
-  return list ? JSON.parse(list) : [];
+  return playerStatePersistence.getPlayerList();
 };
 
 export const savePlayerList = (players: string[]) => {
-  localStorage.setItem('playerList', JSON.stringify(players));
+  playerStatePersistence.savePlayerList(players);
 };
 
 export const addPlayer = (name: string): boolean => {
@@ -26,25 +26,15 @@ export const addPlayer = (name: string): boolean => {
 };
 
 export const setActivePlayer = (name: string) => {
-  localStorage.setItem('activePlayer', name);
+  playerStatePersistence.setActivePlayer(name);
 };
 
 export const getActivePlayer = (): string | null => {
-  return localStorage.getItem('activePlayer');
+  return playerStatePersistence.getActivePlayer();
 };
 
 export const initializePlayerData = (name: string) => {
-  const key = (suffix: string) => `player_${name}_${suffix}`;
-
-  if (!localStorage.getItem(key('competencyTable'))) {
-    localStorage.setItem(key('competencyTable'), JSON.stringify(initialTable));
-  }
-  if (!localStorage.getItem(key('answerHistory'))) {
-    localStorage.setItem(key('answerHistory'), JSON.stringify([]));
-  }
-  if (!localStorage.getItem(key('playCount'))) {
-    localStorage.setItem(key('playCount'), '0');
-  }
+  playerStatePersistence.initializePlayerData(name);
 };
 
 export const getPlayerDataKey = (suffix: string): string => {
