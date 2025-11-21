@@ -21,6 +21,7 @@ export type PlayerState = {
   competencies: CompetencyEntry[];
   answerHistory: AnswerHistoryEntry[];
   globalState: GlobalState;
+  highestMastery: number;
 };
 
 export interface PlayerStatePersistence {
@@ -39,25 +40,30 @@ export class LocalStoragePlayerStatePersistence implements PlayerStatePersistenc
     const competencyKey = getPlayerDataKey('competencyTable');
     const historyKey = getPlayerDataKey('answerHistory');
     const globalKey = getPlayerDataKey('playCount');
+    const highestKey = getPlayerDataKey('highestMastery');
 
     localStorage.setItem(competencyKey, JSON.stringify(state.competencies));
     localStorage.setItem(historyKey, JSON.stringify(state.answerHistory));
     localStorage.setItem(globalKey, state.globalState.playCount.toString());
+    localStorage.setItem(highestKey, state.highestMastery.toString());
   }
 
   loadPlayerState(): PlayerState {
     const competencyKey = getPlayerDataKey('competencyTable');
     const historyKey = getPlayerDataKey('answerHistory');
     const globalKey = getPlayerDataKey('playCount');
+    const highestKey = getPlayerDataKey('highestMastery');
 
     const competencies: CompetencyEntry[] = JSON.parse(localStorage.getItem(competencyKey) || '[]');
     const answerHistory: AnswerHistoryEntry[] = JSON.parse(localStorage.getItem(historyKey) || '[]');
     const playCount = parseInt(localStorage.getItem(globalKey) || '0');
+    const highestMastery = parseInt(localStorage.getItem(highestKey) || '0');
 
     return {
       competencies,
       answerHistory,
-      globalState: { playCount }
+      globalState: { playCount },
+      highestMastery
     };
   }
 
@@ -65,7 +71,8 @@ export class LocalStoragePlayerStatePersistence implements PlayerStatePersistenc
     const state: PlayerState = {
       competencies: initialTable,
       answerHistory: [],
-      globalState: { playCount: 0 }
+      globalState: { playCount: 0 },
+      highestMastery: 0
     };
 
     this.savePlayerState(state);
@@ -100,6 +107,9 @@ export class LocalStoragePlayerStatePersistence implements PlayerStatePersistenc
     }
     if (!localStorage.getItem(key('playCount'))) {
       localStorage.setItem(key('playCount'), '0');
+    }
+    if (!localStorage.getItem(key('highestMastery'))) {
+      localStorage.setItem(key('highestMastery'), '0');
     }
   }
 }
