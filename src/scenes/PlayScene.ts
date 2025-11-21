@@ -12,29 +12,30 @@ export default class PlayScene extends Phaser.Scene {
   gameMechanics!: GameMechanics;
   inputHandler!: InputHandler;
   stars!: Phaser.GameObjects.Blitter;
+  starfieldHeight!: number;
 
   constructor() {
     super('PlayScene');
   }
 
   preload() {
-    this.load.spritesheet('explosion', 'src/assets/explosion.png', {
+    this.load.spritesheet('explosion', '/assets/explosion.png', {
       frameWidth: 64,
       frameHeight: 64,
       endFrame: 23
     });
-    this.load.spritesheet('enemy', 'src/assets/bsquadron-enemies.png', {
+    this.load.spritesheet('enemy', '/assets/bsquadron-enemies.png', {
       frameWidth: 192,
       frameHeight: 160
     });
-    this.load.spritesheet('ship', 'src/assets/ship.png', {
+    this.load.spritesheet('ship', '/assets/ship.png', {
       frameWidth: 16,
       frameHeight: 24
     });
-    this.load.image('bullet', 'src/assets/bullet7.png');
-    this.load.image('starfield', 'src/assets/starfield.png');
-    this.load.image('button_panel', 'src/assets/blue_panel.svg');
-    this.load.image('feedback_panel', 'src/assets/red_panel.svg');
+    this.load.image('bullet', '/assets/bullet7.png');
+    this.load.image('starfield', '/assets/starfield.avif');
+    this.load.image('button_panel', '/assets/blue_panel.svg');
+    this.load.image('feedback_panel', '/assets/red_panel.svg');
   }
 
   create() {
@@ -45,10 +46,9 @@ export default class PlayScene extends Phaser.Scene {
     }
 
     this.stars = this.add.blitter(0, 0, 'starfield');
+    this.starfieldHeight = this.textures.get('starfield').getSourceImage().height;
     this.stars.create(0, 0);
-    this.stars.create(512, 0);
-    this.stars.create(0, -512);
-    this.stars.create(512, -512);
+    this.stars.create(0, -this.starfieldHeight);
 
     this.puzzleManager = new PuzzleManager();
     this.puzzleManager.loadData();
@@ -74,6 +74,6 @@ export default class PlayScene extends Phaser.Scene {
     }
 
     this.stars.y += 1;
-    this.stars.y %= 512;
+    this.stars.y %= this.starfieldHeight;
   }
 }

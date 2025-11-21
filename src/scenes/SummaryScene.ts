@@ -8,23 +8,24 @@ export default class SummaryScene extends Phaser.Scene {
    }
 
    stars!: Phaser.GameObjects.Blitter;
+   starfieldHeight!: number;
 
    preload() {
-     this.load.image('starfield', 'src/assets/starfield.png');
+     this.load.image('starfield', '/assets/starfield.avif');
    }
 
    create(data: { deltas: number[]; presented: Array<{ puzzle: string; rating: number; userRating: number }>; times: number[]; correctness: boolean[] }) {
      const { deltas, presented, times, correctness } = data;
 
-     this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
-     this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
 
      this.stars = this.add.blitter(0, 0, 'starfield');
+     this.starfieldHeight = this.textures.get('starfield').getSourceImage().height;
      this.stars.create(0, 0);
-     this.stars.create(512, 0);
-     this.stars.create(0, -512);
-     this.stars.create(512, -512);
-
+     this.stars.create(0, -this.starfieldHeight);
+     
+     this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
+     
      // Load full table and history
      const table = JSON.parse(localStorage.getItem(getPlayerDataKey('competencyTable'))!);
      const history = JSON.parse(localStorage.getItem(getPlayerDataKey('answerHistory')) || '[]');
@@ -164,6 +165,6 @@ export default class SummaryScene extends Phaser.Scene {
    }
     update() {
       this.stars.y += 1;
-      this.stars.y %= 512;
+      this.stars.y %= this.starfieldHeight;
     }
 }

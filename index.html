@@ -4,6 +4,51 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Multiplication Tables Trainer</title>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+
+      body {
+        margin: 0;
+        height: 100vh;
+        background: #000 url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?auto=format&fit=crop&q=80') no-repeat center center fixed;
+        background-size: cover;
+        font-family: 'Orbitron', sans-serif;
+        color: #0ff;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        overflow: hidden;
+      }
+
+      #game-container {
+        background: rgba(5, 15, 40, 0.85);
+        border: 3px solid #0ff;
+        border-radius: 8px;
+        box-shadow: 
+          0 0 20px #0ff,
+          inset 0 0 30px rgba(0, 255, 255, 0.2);
+        position: relative;
+        overflow: hidden;
+        padding: 20px;
+        max-width: 90vw;
+        max-height: 90vh;
+      }
+
+      #game-container::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, transparent 45%, rgba(0,255,255,0.07) 50%, transparent 55%);
+        background-size: 300% 300%;
+        animation: scan 8s linear infinite;
+        pointer-events: none;
+      }
+
+      @keyframes scan {
+        0% { background-position: 0% 0%; }
+        100% { background-position: 100% 100%; }
+      }
+    </style>
   </head>
   <body>
     <div id="game-container"></div>

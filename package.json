@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A Phaser 3 web game to train multiplication tables (2×2 to 12×12) with adaptive difficulty and local persistence.",
   "private": true,
+  "main": "electron/main.js",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
@@ -10,11 +11,16 @@
     "test": "vitest",
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
-    "collate": "node tools/collate.js"
+    "collate": "node tools/collate.js",
+    "bundle": "pnpm build && rm -f multiplication-trainer.zip && zip -r multiplication-trainer.zip dist/",
+    "electron": "electron .",
+    "electron:build": "electron-builder"
   },
   "devDependencies": {
     "@types/jsdom": "^27.0.0",
     "@vitest/ui": "^4.0.9",
+    "electron": "^33.0.0",
+    "electron-builder": "^26.0.0",
     "jsdom": "^27.2.0",
     "typescript": "^5.5.3",
     "vite": "^5.4.8",
@@ -37,5 +43,25 @@
     "typescript"
   ],
   "author": "",
-  "license": "MIT"
+  "license": "MIT",
+  "build": {
+    "appId": "com.multiplicationtrainer.game",
+    "productName": "Multiplication Trainer",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.games"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  }
 }

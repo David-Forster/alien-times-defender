@@ -9,9 +9,10 @@ export default class MenuScene extends Phaser.Scene {
    }
 
    stars!: Phaser.GameObjects.Blitter;
+   starfieldHeight!: number;
 
    preload() {
-     this.load.image('starfield', 'src/assets/starfield.png');
+     this.load.image('starfield', '/assets/starfield.avif');
    }
 
    create() {
@@ -21,10 +22,10 @@ export default class MenuScene extends Phaser.Scene {
      }
 
      this.stars = this.add.blitter(0, 0, 'starfield');
+     this.starfieldHeight = this.textures.get('starfield').getSourceImage().height ;
+     console.log('starfield height is:', this.starfieldHeight)
      this.stars.create(0, 0);
-     this.stars.create(512, 0);
-     this.stars.create(0, -512);
-     this.stars.create(512, -512);
+     this.stars.create(0, -this.starfieldHeight);
 
      this.add.text(400, 100, 'Multiplication Tables Trainer', { fontSize: '36px', color: '#ffffff' }).setOrigin(0.5);
 
@@ -131,6 +132,6 @@ export default class MenuScene extends Phaser.Scene {
    }
     update() {
       this.stars.y += 1;
-      this.stars.y %= 512;
+      this.stars.y %= this.starfieldHeight;
     }
 }
