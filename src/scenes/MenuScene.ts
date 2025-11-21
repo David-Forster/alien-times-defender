@@ -27,6 +27,37 @@ export default class MenuScene extends Phaser.Scene {
      this.stars.create(0, 0);
      this.stars.create(0, -this.starfieldHeight);
 
+     let focusableElements: Array<{ obj: Phaser.GameObjects.GameObject, type: string, action: () => void, originalColor?: number | string }> = [];
+     let currentFocusIndex = 0;
+     let dialogOpen = false;
+     let dialogElements: Array<{ obj: Phaser.GameObjects.GameObject, type: string, action: () => void }> = [];
+     let dialogFocusIndex = 0;
+
+     function highlightMain(index: number) {
+       focusableElements.forEach((el, i) => {
+         if (el.type === 'player' || el.type === 'add') {
+           const rect = el.obj as Phaser.GameObjects.Rectangle;
+           rect.setFillStyle(i === index ? 0x666666 : el.originalColor as number);
+         } else if (el.type === 'start') {
+           const text = el.obj as Phaser.GameObjects.Text;
+           text.setStyle({ backgroundColor: i === index ? '#00aa00' : el.originalColor as string });
+         }
+       });
+     }
+
+     function highlightDialog(index: number) {
+       dialogElements.forEach((el, i) => {
+         if (el.type === 'ok' || el.type === 'cancel') {
+           const text = el.obj as Phaser.GameObjects.Text;
+           text.setStyle({ color: i === index ? '#ffff00' : (el.type === 'ok' ? '#00ff00' : '#ff0000') });
+         }
+         if (el.type === 'input') {
+           const inputEl = el.obj as Phaser.GameObjects.DOMElement;
+           (inputEl.node as HTMLInputElement).style.border = i === index ? '2px solid yellow' : '1px solid #ccc';
+         }
+       });
+     }
+
      this.add.text(400, 100, 'Multiplication Tables Trainer', { fontSize: '36px', color: '#ffffff' }).setOrigin(0.5);
 
      const players = getPlayerList();
@@ -56,6 +87,8 @@ export default class MenuScene extends Phaser.Scene {
 
          scrollContainer.add(bg);
 
+         focusableElements.push({ obj: bg, type: 'player', action: () => { setActivePlayer(name); this.scene.restart(); }, originalColor: name === activePlayer ? 0x00aa00 : 0x333333 });
+
          const nameText = this.add.text(-230, y, name, { fontSize: '20px', color: '#ffffff' }).setOrigin(0, 0.5);
          scrollContainer.add(nameText);
          if (name === activePlayer) {
@@ -72,28 +105,47 @@ export default class MenuScene extends Phaser.Scene {
        const addText = this.add.text(0, addY, '+ Add New Player', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
        scrollContainer.add(addBtn);
        scrollContainer.add(addText);
+
+       focusableElements.push({ obj: addBtn, type: 'add', action: () => showAddPlayerDialog(), originalColor: 0x0066cc });
      };
 
      updatePlayerButtons();
 
+     let modal: Phaser.GameObjects.Rectangle;
+     let input: Phaser.GameObjects.DOMElement;
+     let confirmBtn: Phaser.GameObjects.Text;
+     let cancelBtn: Phaser.GameObjects.Text;
+     let titleText: Phaser.GameObjects.Text;
+
+     const closeDialog = () => {
+       modal.destroy();
+       input.destroy();
+       confirmBtn.destroy();
+       cancelBtn.destroy();
+       titleText.destroy();
+       dialogOpen = false;
+       dialogElements = [];
+     };
+
      // Add Player Dialog
      const showAddPlayerDialog = () => {
-       const modal = this.add.rectangle(400, 300, 400, 200, 0x000000, 0.8).setDepth(10).setInteractive();
-       const title = this.add.text(400, 220, 'Enter Player Name', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5).setDepth(11);
+       dialogOpen = true;
+       modal = this.add.rectangle(400, 300, 400, 200, 0x000000, 0.8).setDepth(10).setInteractive();
+       titleText = this.add.text(400, 220, 'Enter Player Name', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5).setDepth(11);
 
-       const input = this.add.dom(400, 280, 'input', {
+       input = this.add.dom(400, 280, 'input', {
          type: 'text',
          placeholder: 'Name (max 20 chars)',
          maxLength: 20,
          style: 'width: 300px; font-size: 18px; padding: 8px; text-align: center;'
        }).setDepth(11);
 
-       const confirmBtn = this.add.text(340, 340, 'OK', { fontSize: '20px', color: '#00ff00' })
+       confirmBtn = this.add.text(340, 340, 'OK', { fontSize: '20px', color: '#00ff00' })
          .setOrigin(0.5).setInteractive().setDepth(11)
          .on('pointerdown', () => {
            const name = (input.node as HTMLInputElement).value.trim();
            if (addPlayer(name)) {
-             modal.destroy(); input.destroy(); confirmBtn.destroy(); cancelBtn.destroy(); title.destroy();
+             closeDialog();
              this.scene.restart();
            } else {
              this.add.text(400, 370, 'Invalid or duplicate name!', { fontSize: '16px', color: '#ff0000' })
@@ -101,11 +153,42 @@ export default class MenuScene extends Phaser.Scene {
            }
          });
 
-       const cancelBtn = this.add.text(460, 340, 'Cancel', { fontSize: '20px', color: '#ff0000' })
+       cancelBtn = this.add.text(460, 340, 'Cancel', { fontSize: '20px', color: '#ff0000' })
          .setOrigin(0.5).setInteractive().setDepth(11)
-         .on('pointerdown', () => {
-           modal.destroy(); input.destroy(); confirmBtn.destroy(); cancelBtn.destroy(); title.destroy();
-         });
+         .on('pointerdown', () => closeDialog());
+
+       dialogElements = [
+         { obj: input, type: 'input', action: () => {} },
+         { obj: confirmBtn, type: 'ok', action: () => {
+           const name = (input.node as HTMLInputElement).value.trim();
+           if (addPlayer(name)) {
+             closeDialog();
+             this.scene.restart();
+           } else {
+             this.add.text(400, 370, 'Invalid or duplicate name!', { fontSize: '16px', color: '#ff0000' }).setOrigin(0.5).setDepth(11);
+           }
+         }},
+         { obj: cancelBtn, type: 'cancel', action: () => closeDialog() }
+       ];
+
+       dialogFocusIndex = 0;
+       (input.node as HTMLInputElement).focus();
+       highlightDialog(dialogFocusIndex);
+
+       (input.node as HTMLInputElement).addEventListener('keydown', (e) => {
+         if (e.key === 'Enter') {
+           dialogElements[1].action();
+         } else if (e.key === 'Escape') {
+           closeDialog();
+         } else if (e.key === 'Tab') {
+           e.preventDefault();
+           dialogFocusIndex = (dialogFocusIndex + 1) % dialogElements.length;
+           highlightDialog(dialogFocusIndex);
+           if (dialogElements[dialogFocusIndex].type === 'input') {
+             (input.node as HTMLInputElement).focus();
+           }
+         }
+       });
      };
 
      // Show stats only if player selected
@@ -126,9 +209,66 @@ export default class MenuScene extends Phaser.Scene {
          .on('pointerdown', () => {
            this.scene.start('PlayScene');
          });
+
+       focusableElements.push({ obj: startButton, type: 'start', action: () => this.scene.start('PlayScene'), originalColor: '#006600' });
      } else {
        this.add.text(400, 500, 'Create or select a player to begin', { fontSize: '18px', color: '#aaaaaa' }).setOrigin(0.5);
      }
+
+     highlightMain(currentFocusIndex);
+
+     this.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+       if (dialogOpen) {
+         if (event.key === 'Tab') {
+           event.preventDefault();
+           if (event.shiftKey) {
+             dialogFocusIndex = (dialogFocusIndex - 1 + dialogElements.length) % dialogElements.length;
+           } else {
+             dialogFocusIndex = (dialogFocusIndex + 1) % dialogElements.length;
+           }
+           highlightDialog(dialogFocusIndex);
+           if (dialogElements[dialogFocusIndex].type === 'input') {
+             ((dialogElements[dialogFocusIndex].obj as Phaser.GameObjects.DOMElement).node as HTMLInputElement).focus();
+           }
+         } else if (event.key === 'ArrowDown') {
+           dialogFocusIndex = (dialogFocusIndex + 1) % dialogElements.length;
+           highlightDialog(dialogFocusIndex);
+           if (dialogElements[dialogFocusIndex].type === 'input') {
+             ((dialogElements[dialogFocusIndex].obj as Phaser.GameObjects.DOMElement).node as HTMLInputElement).focus();
+           }
+         } else if (event.key === 'ArrowUp') {
+           dialogFocusIndex = (dialogFocusIndex - 1 + dialogElements.length) % dialogElements.length;
+           highlightDialog(dialogFocusIndex);
+           if (dialogElements[dialogFocusIndex].type === 'input') {
+             ((dialogElements[dialogFocusIndex].obj as Phaser.GameObjects.DOMElement).node as HTMLInputElement).focus();
+           }
+         } else if (event.key === 'Enter') {
+           if (dialogElements[dialogFocusIndex].type !== 'input') {
+             dialogElements[dialogFocusIndex].action();
+           }
+         } else if (event.key === 'Escape') {
+           closeDialog();
+         }
+       } else {
+         if (event.key === 'Tab') {
+           event.preventDefault();
+           if (event.shiftKey) {
+             currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+           } else {
+             currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+           }
+           highlightMain(currentFocusIndex);
+         } else if (event.key === 'ArrowDown') {
+           currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+           highlightMain(currentFocusIndex);
+         } else if (event.key === 'ArrowUp') {
+           currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+           highlightMain(currentFocusIndex);
+         } else if (event.key === 'Enter') {
+           focusableElements[currentFocusIndex].action();
+         }
+       }
+     });
    }
     update() {
       this.stars.y += 1;

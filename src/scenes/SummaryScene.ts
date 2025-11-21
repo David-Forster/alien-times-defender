@@ -153,14 +153,55 @@ export default class SummaryScene extends Phaser.Scene {
        this.add.text(x, 360, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
      });
 
-     const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
-     restartButton.on('pointerdown', () => {
-       this.scene.start('PlayScene');
-     });
+     const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 } })
+       .setOrigin(0.5).setInteractive()
+       .on('pointerover', () => restartButton.setStyle({ backgroundColor: '#00aa00' }))
+       .on('pointerout', () => restartButton.setStyle({ backgroundColor: '#006600' }))
+       .on('pointerdown', () => {
+         this.scene.start('PlayScene');
+       });
 
-     const menuButton = this.add.text(400, 490, 'Back to Menu', { fontSize: '24px', color: '#ffffff' }).setOrigin(0.5).setInteractive();
-     menuButton.on('pointerdown', () => {
-       this.scene.start('MenuScene');
+     const menuButton = this.add.text(400, 520, 'Back to Menu', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 } })
+       .setOrigin(0.5).setInteractive()
+       .on('pointerover', () => menuButton.setStyle({ backgroundColor: '#00aa00' }))
+       .on('pointerout', () => menuButton.setStyle({ backgroundColor: '#006600' }))
+       .on('pointerdown', () => {
+         this.scene.start('MenuScene');
+       });
+
+     let focusableElements: Array<{ obj: Phaser.GameObjects.GameObject, type: string, action: () => void, originalColor: string }> = [
+       { obj: restartButton, type: 'button', action: () => this.scene.start('PlayScene'), originalColor: '#006600' },
+       { obj: menuButton, type: 'button', action: () => this.scene.start('MenuScene'), originalColor: '#006600' }
+     ];
+     let currentFocusIndex = 0;
+
+     function highlight(index: number) {
+       focusableElements.forEach((el, i) => {
+         const text = el.obj as Phaser.GameObjects.Text;
+         text.setStyle({ backgroundColor: i === index ? '#00aa00' : el.originalColor });
+       });
+     }
+
+     highlight(currentFocusIndex);
+
+     this.input.keyboard.on('keydown', (event: KeyboardEvent) => {
+       if (event.key === 'Tab') {
+         event.preventDefault();
+         if (event.shiftKey) {
+           currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+         } else {
+           currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+         }
+         highlight(currentFocusIndex);
+       } else if (event.key === 'ArrowDown') {
+         currentFocusIndex = (currentFocusIndex + 1) % focusableElements.length;
+         highlight(currentFocusIndex);
+       } else if (event.key === 'ArrowUp') {
+         currentFocusIndex = (currentFocusIndex - 1 + focusableElements.length) % focusableElements.length;
+         highlight(currentFocusIndex);
+       } else if (event.key === 'Enter') {
+         focusableElements[currentFocusIndex].action();
+       }
      });
    }
     update() {
