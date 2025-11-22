@@ -189,7 +189,7 @@ describe('MenuScene', () => {
     scene.create();
     if (confirmCallback) {
       confirmCallback();
-      expect(scene.add.text).toHaveBeenCalledWith(400, 370, 'Invalid or duplicate name!', expect.any(Object));
+      expect(scene.add.text).toHaveBeenCalledWith(400, 275, 'Invalid name: empty, too long, or duplicate', expect.any(Object));
       expect(scene.scene.restart).not.toHaveBeenCalled();
     }
   });

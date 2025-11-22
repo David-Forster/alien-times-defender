@@ -46,6 +46,16 @@ export class MenuUIManager implements IUIManager {
 
     this.updatePlayerButtons();
 
+    // Scroll to active player
+    const currentActivePlayer = getActivePlayer();
+    if (currentActivePlayer) {
+      const index = this.sortedPlayers.findIndex(p => p.name === currentActivePlayer);
+      if (index >= 0) {
+        this.scrollOffset = Math.max(0, Math.min(index - 2, this.sortedPlayers.length - this.maxVisible));
+        this.updatePlayerButtons();
+      }
+    }
+
     // Add button
     const addBtn = this.scene.add.rectangle(250, 525, 200, 50, 0x0066cc)
       .setInteractive()
@@ -90,13 +100,7 @@ export class MenuUIManager implements IUIManager {
 
       const mastery = competencies.length > 0 ? calculateMastery(competencies, answerHistory) : { masteryScore: 0 };
       return { name, currentMastery: mastery.masteryScore, highestMastery };
-    }).sort((a, b) => {
-      if (a.highestMastery !== b.highestMastery) {
-        return b.highestMastery - a.highestMastery;
-      } else {
-        return b.currentMastery - a.currentMastery;
-      }
-    });
+    }).sort((a, b) => b.currentMastery - a.currentMastery);
   }
 
   private updatePlayerButtons() {

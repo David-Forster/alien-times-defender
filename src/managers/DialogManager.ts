@@ -18,7 +18,8 @@ export class DialogManager {
   private confirmBtn: Phaser.GameObjects.Text | null = null;
   private cancelBtn: Phaser.GameObjects.Text | null = null;
   private titleText: Phaser.GameObjects.Text | null = null;
-  private onConfirm: (name: string) => void = () => {};
+  private errorText: Phaser.GameObjects.Text | null = null;
+  private onConfirm: (name: string) => boolean = () => false;
   private onCancel: () => void = () => {};
 
   constructor(scene: Phaser.Scene, navigationManager: NavigationManager) {
@@ -26,9 +27,10 @@ export class DialogManager {
     this.navigationManager = navigationManager;
   }
 
-  public showAddPlayerDialog(onConfirm: (name: string) => void, onCancel: () => void) {
+  public showAddPlayerDialog(onConfirm: (name: string) => boolean, onCancel: () => void) {
     this.onConfirm = onConfirm;
     this.onCancel = onCancel;
+    this.errorText = null;
 
     this.modal = this.scene.add.rectangle(400, 225, 400, 200, 0x000000, 0.8).setDepth(10).setInteractive();
     this.titleText = this.scene.add.text(400, 145, 'Enter Player Name', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
@@ -62,13 +64,20 @@ export class DialogManager {
 
   private handleConfirm() {
     const name = (this.input!.node as HTMLInputElement).value.trim();
-    this.onConfirm(name);
-    this.closeDialog();
+    const success = this.onConfirm(name);
+    if (success) {
+      this.closeDialog();
+    }
   }
 
   private handleCancel() {
     this.onCancel();
     this.closeDialog();
+  }
+
+  public showError(message: string) {
+    if (this.errorText) this.errorText.destroy();
+    this.errorText = this.scene.add.text(400, 275, message, { fontSize: '14px', color: '#ff0000', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
   }
 
   public closeDialog() {
@@ -77,6 +86,7 @@ export class DialogManager {
     if (this.confirmBtn) this.confirmBtn.destroy();
     if (this.cancelBtn) this.cancelBtn.destroy();
     if (this.titleText) this.titleText.destroy();
+    if (this.errorText) this.errorText.destroy();
     this.dialogElements = [];
     this.navigationManager.closeDialog();
   }

@@ -34,11 +34,11 @@ export default class MenuScene extends Phaser.Scene {
        onAddPlayer: () => dialogManager.showAddPlayerDialog(
          (name: string) => {
            if (addPlayer(name)) {
-             dialogManager.closeDialog();
              this.scene.restart();
+             return true;
            } else {
-             // Error handling: could add a message, but for simplicity, just close
-             dialogManager.closeDialog();
+             dialogManager.showError('Invalid name: empty, too long, or duplicate');
+             return false;
            }
          },
          () => dialogManager.closeDialog()

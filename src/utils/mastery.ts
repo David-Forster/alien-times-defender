@@ -20,14 +20,14 @@ export function calculateMastery(
 
   // 2. Speed & Accuracy from recent history (last 20 answers)
   const recent = history.slice(-20);
-  const recentAccuracy = recent.length > 0 ? recent.filter(h => h.correct).length / recent.length : 1;
+  const recentAccuracy = recent.length > 0 ? recent.filter(h => h.correct).length / recent.length : 0;
   const avgResponseTime = recent.length > 0 ? recent.reduce((s, h) => s + h.time, 0) / recent.length : 0;
 
   // 3. Mastery count: puzzles with userRating <= 5 AND fast in history
   const puzzlesAtMastery = validEntries.filter(p => p.userRating <= 5).length;
 
   // 4. Final Mastery Score (0–100)
-  const speedBonus = avgResponseTime > 0 ? Math.max(0, 100 - (avgResponseTime / MASTERY_THRESHOLD_FAST) * 50) : 100;
+  const speedBonus = avgResponseTime > 0 ? Math.max(0, 100 - (avgResponseTime / MASTERY_THRESHOLD_FAST) * 50) : 0;
   const accuracyBonus = recentAccuracy * 100;
   const masteryScore = Math.round(
     (confidenceScore * 0.5) +
