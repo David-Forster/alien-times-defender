@@ -1,5 +1,5 @@
 {
-  "name": "multiplication-trainer",
+  "name": "alien-times-defender",
   "version": "1.0.0",
   "description": "A Phaser 3 web game to train multiplication tables (2×2 to 12×12) with adaptive difficulty and local persistence.",
   "private": true,
@@ -12,7 +12,7 @@
     "test:watch": "vitest --watch",
     "test:ui": "vitest --ui",
     "collate": "node tools/collate.js",
-    "bundle": "pnpm build && rm -f multiplication-trainer.zip && zip -r multiplication-trainer.zip dist/",
+    "bundle": "pnpm build && rm -f alien-times-defender.zip && zip -r alien-times-defender.zip dist/",
     "electron": "electron .",
     "electron:build": "electron-builder"
   },
@@ -45,8 +45,8 @@
   "author": "",
   "license": "MIT",
   "build": {
-    "appId": "com.multiplicationtrainer.game",
-    "productName": "Multiplication Trainer",
+    "appId": "com.alientimesdefender.game",
+    "productName": "Alien Times Defender",
     "directories": {
       "output": "dist-electron"
     },

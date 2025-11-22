@@ -99,10 +99,12 @@ describe('MenuScene', () => {
     expect(localStorageMock.setItem).toHaveBeenCalledWith('player_Player 1_playCount', '0');
   });
 
-  it('should render title and player selection text', () => {
+  it('should render title and leaderboard text', () => {
     scene.create();
-    expect(scene.add.text).toHaveBeenCalledWith(400, 100, 'Multiplication Tables Trainer', expect.any(Object));
-    expect(scene.add.text).toHaveBeenCalledWith(400, 160, 'Select Player', expect.any(Object));
+    expect(scene.add.text).toHaveBeenCalledWith(350, 25, 'Alien', expect.any(Object));
+    expect(scene.add.text).toHaveBeenCalledWith(400, 25, '×', expect.any(Object));
+    expect(scene.add.text).toHaveBeenCalledWith(450, 25, 'Defender', expect.any(Object));
+    expect(scene.add.text).toHaveBeenCalledWith(400, 85, 'Leaderboard', expect.any(Object));
   });
 
   it('should render player list with active player highlighted', () => {

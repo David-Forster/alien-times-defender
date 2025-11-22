@@ -23,8 +23,8 @@ export default class SummaryScene extends Phaser.Scene {
      this.stars.create(0, 0);
      this.stars.create(0, -this.starfieldHeight);
      
-     this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff' }).setOrigin(0.5);
-     this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff' }).setOrigin(0.5);
+     this.add.text(400, 60, 'Session Summary', { fontSize: '32px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+     this.add.text(400, 100, `for ${getActivePlayer()}`, { fontSize: '20px', color: '#00ffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
      
      // Load full table and history
      const table = JSON.parse(localStorage.getItem(getPlayerDataKey('competencyTable'))!);
@@ -60,14 +60,14 @@ export default class SummaryScene extends Phaser.Scene {
      const masteryDeltaLabel = masteryDelta == 0 ? 'no change from previous session'
       : masteryDelta > 0 ? `up ${masteryDelta.toFixed(0)}% from previous session`
       : `down ${Math.abs(masteryDelta).toFixed(0)}% from previous session`;
-     this.add.text(400, masteryY - 40, 'Mastery Progress', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
+     this.add.text(400, masteryY - 40, 'Mastery Progress', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
      this.add.rectangle(400, masteryY, 400, 20, 0x666666).setOrigin(0.5);
      this.add.rectangle(200 + (newMastery.masteryScore / 100) * 200, masteryY, (newMastery.masteryScore / 100) * 400, 20, 0x00ffff).setOrigin(0.5);
      const percentageText = `${newMastery.masteryScore.toFixed(1)}%`;
      const textX = 200 + (newMastery.masteryScore / 100) * 400 - 10;
-     this.add.text(textX, masteryY, percentageText, { fontSize: '16px', color: '#000000' }).setOrigin(1, 0.5);
+     this.add.text(textX, masteryY, percentageText, { fontSize: '16px', color: '#000000', fontFamily: 'Orbitron' }).setOrigin(1, 0.5);
      this.add.text(400, masteryY + 30, masteryDeltaLabel, {
-       fontSize: '14px', color: masteryDelta == 0 ? '#ffffff' : masteryDelta > 0 ? '#00ff00' : '#ff0000'
+       fontSize: '14px', color: masteryDelta == 0 ? '#ffffff' : masteryDelta > 0 ? '#00ff00' : '#ff0000', fontFamily: 'Orbitron'
      }).setOrigin(0.5);
      this.add.rectangle(200 + (highestMastery / 100) * 400, masteryY, 2, 22, 0x0080ff).setOrigin(0.5);
 
@@ -77,7 +77,7 @@ export default class SummaryScene extends Phaser.Scene {
      if (highestMastery > 80) labelX -= 50;
      const labelY = masteryY - 20;
      const labelText = `Highest: ${highestMastery.toFixed(1)}%`;
-     const label = this.add.text(labelX, labelY, labelText, { fontSize: '14px', color: '#0080ff' }).setOrigin(0.5);
+     const label = this.add.text(labelX, labelY, labelText, { fontSize: '14px', color: '#0080ff', fontFamily: 'Orbitron' }).setOrigin(0.5);
      const bg = this.add.rectangle(labelX, labelY, label.width + 10, label.height + 4, 0x000000, 0.5).setOrigin(0.5);
      bg.setDepth(label.depth - 1);
 
@@ -150,10 +150,10 @@ export default class SummaryScene extends Phaser.Scene {
          graphics.strokePath();
        }
        // Label multiplier
-       this.add.text(x, 360, multiplier + 'x', { fontSize: '16px', color: '#ffffff' }).setOrigin(0.5);
+       this.add.text(x, 360, multiplier + 'x', { fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
      });
 
-     const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 } })
+     const restartButton = this.add.text(400, 460, 'Play Again', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 }, fontFamily: 'Orbitron' })
        .setOrigin(0.5).setInteractive()
        .on('pointerover', () => restartButton.setStyle({ backgroundColor: '#00aa00' }))
        .on('pointerout', () => restartButton.setStyle({ backgroundColor: '#006600' }))
@@ -161,7 +161,7 @@ export default class SummaryScene extends Phaser.Scene {
          this.scene.start('PlayScene');
        });
 
-     const menuButton = this.add.text(400, 520, 'Back to Menu', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 } })
+     const menuButton = this.add.text(400, 520, 'Back to Menu', { fontSize: '24px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 }, fontFamily: 'Orbitron' })
        .setOrigin(0.5).setInteractive()
        .on('pointerover', () => menuButton.setStyle({ backgroundColor: '#00aa00' }))
        .on('pointerout', () => menuButton.setStyle({ backgroundColor: '#006600' }))

@@ -46,7 +46,7 @@ export class UIManager {
   }
 
   createProgress() {
-    this.progressText = this.scene.add.text(PROGRESS_X, PROGRESS_Y, '1 / 10', { fontSize: '24px', color: '#ffffff' }).setOrigin(1, 0);
+    this.progressText = this.scene.add.text(PROGRESS_X, PROGRESS_Y, '1 / 10', { fontSize: '24px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(1, 0);
   }
 
   createLives() {
@@ -66,7 +66,7 @@ export class UIManager {
     this.puzzleShip.setDepth(10);
     this.scene.physics.world.enable(this.puzzleShip);
 
-    this.puzzleText = this.scene.add.text(0, -50, puzzle, { fontSize: PUZZLE_FONT_SIZE, color: '#ffffff' }).setOrigin(0.5);
+    this.puzzleText = this.scene.add.text(0, -50, puzzle, { fontSize: PUZZLE_FONT_SIZE, color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.puzzleShip.add(this.puzzleText);
 
     this.psTween = this.scene.tweens.add({
@@ -83,7 +83,7 @@ export class UIManager {
     this.inputPanelSprite.setAlpha(0.7); // Make translucent
     this.inputPanelSprite.setVisible(false); // Hide initially since no text
     this.inputContainer.add(this.inputPanelSprite);
-    this.inputText = this.scene.add.text(0, 0, '', { fontSize: INPUT_FONT_SIZE, color: '#ffffff', fontFamily: 'monospace', stroke: '#000000', strokeThickness: 4 }).setOrigin(0.5);
+    this.inputText = this.scene.add.text(0, 0, '', { fontSize: INPUT_FONT_SIZE, color: '#ffffff', fontFamily: 'Orbitron', stroke: '#000000', strokeThickness: 4 }).setOrigin(0.5);
     this.inputContainer.add(this.inputText);
     this.timerBar = this.scene.add.rectangle(SCREEN_CENTER_X, TIMER_BAR_Y, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR).setOrigin(0.5);
     this.timerBar.setDepth(1);
@@ -144,8 +144,8 @@ export class UIManager {
     const parts = text.split(' Correct sequence was: ');
     const topText = parts[0] + ' Correct sequence was:';
     const bottomText = parts[1];
-    const topTextObj = this.scene.add.text(0, -30, topText, { fontSize: '20px', color, fontFamily: 'Arial' }).setOrigin(0.5);
-    const bottomTextObj = this.scene.add.text(0, 20, bottomText, { fontSize: '48px', color, fontFamily: 'Arial' }).setOrigin(0.5);
+    const topTextObj = this.scene.add.text(0, -30, topText, { fontSize: '20px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
+    const bottomTextObj = this.scene.add.text(0, 20, bottomText, { fontSize: '48px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.feedbackContainer.add(panelSprite);
     this.feedbackContainer.add(topTextObj);
     this.feedbackContainer.add(bottomTextObj);
@@ -168,7 +168,7 @@ export class UIManager {
     const displayText = isCorrect ? `+${Math.abs(delta)}` : `-${delta}`;
     const color = isCorrect ? '#00ff00' : '#ff0000';
     const targetY = isCorrect ? y - 50 : y + 50;
-    const deltaText = this.scene.add.text(x, y, displayText, { fontSize: '32px', color }).setOrigin(0.5);
+    const deltaText = this.scene.add.text(x, y, displayText, { fontSize: '32px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.scene.tweens.add({
       targets: deltaText,
       x: x + 40,

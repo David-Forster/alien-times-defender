@@ -34,10 +34,12 @@ export class MenuUIManager implements IUIManager {
     this.loadAndSortPlayers();
 
     // Title
-    this.scene.add.text(400, 25, 'Multiplication Tables Trainer', { fontSize: '36px', color: '#ffffff' }).setOrigin(0.5);
+    this.scene.add.text(270, 25, 'Alien', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.scene.add.text(365, 20, '×', { fontSize: '100px', color: '#ff0000', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.scene.add.text(500, 25, 'Defender', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
 
     // Leaderboard title
-    this.scene.add.text(400, 85, 'Leaderboard', { fontSize: '24px', color: '#ffff00' }).setOrigin(0.5);
+    this.scene.add.text(400, 85, 'Leaderboard', { fontSize: '24px', color: '#ffff00', fontFamily: 'Orbitron' }).setOrigin(0.5);
 
     // Scroll container
     this.scrollContainer = this.scene.add.container(400, this.containerY).setDepth(1);
@@ -48,7 +50,7 @@ export class MenuUIManager implements IUIManager {
     const addBtn = this.scene.add.rectangle(250, 525, 200, 50, 0x0066cc)
       .setInteractive()
       .on('pointerdown', () => this.onAddPlayer());
-    const addText = this.scene.add.text(250, 525, '+ Add New Player', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5);
+    const addText = this.scene.add.text(250, 525, '+ Add New Player', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.focusableElements.push({ obj: addBtn, type: 'add', action: () => this.onAddPlayer(), originalColor: 0x0066cc });
 
     // Stats and start button if active player
@@ -58,12 +60,12 @@ export class MenuUIManager implements IUIManager {
       const history = JSON.parse(localStorage.getItem(`player_${activePlayer}_answerHistory`) || '[]');
       const mastery = calculateMastery(table, history);
 
-      this.scene.add.text(400, 405, `Player: ${activePlayer}`, { fontSize: '18px', color: '#00ffff' }).setOrigin(0.5);
+      this.scene.add.text(400, 405, `Player: ${activePlayer}`, { fontSize: '18px', color: '#00ffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
       this.scene.add.text(400, 430, `Mastery: ${mastery.masteryScore}%`, {
-        fontSize: '20px', color: mastery.masteryScore >= 90 ? '#00ff00' : '#ffff00'
+        fontSize: '20px', color: mastery.masteryScore >= 90 ? '#00ff00' : '#ffff00', fontFamily: 'Orbitron'
       }).setOrigin(0.5);
 
-      const startButton = this.scene.add.text(550, 525, 'Start Game', { fontSize: '28px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 } })
+      const startButton = this.scene.add.text(550, 525, 'Start Game', { fontSize: '28px', color: '#ffffff', backgroundColor: '#006600', padding: { x: 20, y: 10 }, fontFamily: 'Orbitron' })
         .setOrigin(0.5).setInteractive()
         .on('pointerover', () => startButton.setStyle({ backgroundColor: '#00aa00' }))
         .on('pointerout', () => startButton.setStyle({ backgroundColor: '#006600' }))
@@ -71,7 +73,7 @@ export class MenuUIManager implements IUIManager {
 
       this.focusableElements.push({ obj: startButton, type: 'start', action: () => this.onStartGame(), originalColor: '#006600' });
     } else {
-      this.scene.add.text(400, 425, 'Create or select a player to begin', { fontSize: '18px', color: '#aaaaaa' }).setOrigin(0.5);
+      this.scene.add.text(400, 425, 'Create or select a player to begin', { fontSize: '18px', color: '#aaaaaa', fontFamily: 'Orbitron' }).setOrigin(0.5);
     }
   }
 
@@ -113,17 +115,17 @@ export class MenuUIManager implements IUIManager {
 
       this.focusableElements.push({ obj: bg, type: 'player', action: () => this.onSetActivePlayer(player.name), originalColor: player.name === activePlayer ? 0x00aa00 : 0x333333 });
 
-      const nameText = this.scene.add.text(-230, y - 10, player.name, { fontSize: '18px', color: '#ffffff' }).setOrigin(0, 0.5);
+      const nameText = this.scene.add.text(-230, y-8, player.name, { fontSize: '18px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0, 0.5);
       this.scrollContainer.add(nameText);
 
-      const currentText = this.scene.add.text(-230, y + 10, `Current: ${player.currentMastery}%`, { fontSize: '14px', color: '#ffff00' }).setOrigin(0, 0.5);
+      const currentText = this.scene.add.text(20, y-8, `Mastery Rank: ${player.currentMastery}%`, { fontSize: '16px', fontStyle: 'bold', color: '#ffff00', fontFamily: 'Orbitron' }).setOrigin(0, 0.5);
       this.scrollContainer.add(currentText);
 
-      const highestText = this.scene.add.text(0, y + 10, `Highest: ${player.highestMastery}%`, { fontSize: '14px', color: '#ffff00' }).setOrigin(0, 0.5);
+      const highestText = this.scene.add.text(20, y +7, `Highest: ${player.highestMastery}%`, { fontSize: '12px', color: '#cccccc', fontFamily: 'Orbitron' }).setOrigin(0, 0.5);
       this.scrollContainer.add(highestText);
 
       if (player.name === activePlayer) {
-        const checkText = this.scene.add.text(230, y, '✓', { fontSize: '20px', color: '#00ff00' }).setOrigin(1, 0.5);
+        const checkText = this.scene.add.text(230, y-8, '✓', { fontSize: '20px', color: '#00ff00', fontFamily: 'Orbitron' }).setOrigin(1, 0.5);
         this.scrollContainer.add(checkText);
       }
     });

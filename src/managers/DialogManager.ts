@@ -31,7 +31,7 @@ export class DialogManager {
     this.onCancel = onCancel;
 
     this.modal = this.scene.add.rectangle(400, 225, 400, 200, 0x000000, 0.8).setDepth(10).setInteractive();
-    this.titleText = this.scene.add.text(400, 145, 'Enter Player Name', { fontSize: '20px', color: '#ffffff' }).setOrigin(0.5).setDepth(11);
+    this.titleText = this.scene.add.text(400, 145, 'Enter Player Name', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
 
     this.input = this.scene.add.dom(400, 205, 'input', {
       type: 'text',
@@ -40,11 +40,11 @@ export class DialogManager {
       style: 'width: 300px; font-size: 18px; padding: 8px; text-align: center;'
     }).setDepth(11);
 
-    this.confirmBtn = this.scene.add.text(340, 265, 'OK', { fontSize: '20px', color: '#00ff00' })
+    this.confirmBtn = this.scene.add.text(340, 265, 'OK', { fontSize: '20px', color: '#00ff00', fontFamily: 'Orbitron' })
       .setOrigin(0.5).setInteractive().setDepth(11)
       .on('pointerdown', () => this.handleConfirm());
 
-    this.cancelBtn = this.scene.add.text(460, 265, 'Cancel', { fontSize: '20px', color: '#ff0000' })
+    this.cancelBtn = this.scene.add.text(460, 265, 'Cancel', { fontSize: '20px', color: '#ff0000', fontFamily: 'Orbitron' })
       .setOrigin(0.5).setInteractive().setDepth(11)
       .on('pointerdown', () => this.handleCancel());
 
