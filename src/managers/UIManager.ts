@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { PUZZLE_FONT_SIZE, INPUT_FONT_SIZE, FEEDBACK_FONT_SIZE, SCREEN_CENTER_X, PUZZLE_Y, INPUT_Y, TIMER_BAR_Y, FEEDBACK_Y, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR, GT_X, GT_Y, PS_START_Y, PS_MOVE_SPEED, SWOOP_SPEED, LIVES_COUNT, LIFE_ICON_SIZE, LIFE_ICON_SPACING, PROGRESS_X, PROGRESS_Y, TIMER_DELAY_MS } from '../constants';
+import { PUZZLE_FONT_SIZE, INPUT_FONT_SIZE, FEEDBACK_FONT_SIZE, SCREEN_CENTER_X, PUZZLE_Y, INPUT_Y, TIMER_BAR_Y, FEEDBACK_Y, TIMER_BAR_WIDTH, TIMER_BAR_HEIGHT, TIMER_BAR_COLOR, GT_X, GT_Y, PS_START_Y, PS_MOVE_SPEED, SWOOP_SPEED, LIVES_COUNT, LIFE_ICON_SIZE, LIFE_ICON_SPACING, PROGRESS_X, PROGRESS_Y, TIMER_DELAY_MS, GAME_LENGTH } from '../constants';
 
 export class UIManager {
   scene: Phaser.Scene;
@@ -46,7 +46,7 @@ export class UIManager {
   }
 
   createProgress() {
-    this.progressText = this.scene.add.text(PROGRESS_X, PROGRESS_Y, '1 / 10', { fontSize: '24px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(1, 0);
+    this.progressText = this.scene.add.text(PROGRESS_X, PROGRESS_Y, `1 / ${GAME_LENGTH}`, { fontSize: '24px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(1, 0);
   }
 
   createLives() {

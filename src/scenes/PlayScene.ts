@@ -61,7 +61,7 @@ export default class PlayScene extends Phaser.Scene {
     this.uiManager.createLives();
 
     this.reserveShips = [];
-    for (let i = 0; i < GAME_LENGTH - 1; i++) {
+    for (let i = 0; i <= GAME_LENGTH - 1; i++) {
       const x = Phaser.Math.Between(100, 700);
       const y = Phaser.Math.Between(50, 100);
       const ship = this.add.sprite(x, y, 'enemy', 0);
