@@ -57,24 +57,45 @@ export class UIManager {
     }
   }
 
-  presentPuzzle(puzzle: string) {
+  presentPuzzle(puzzle: string, initialX: number = 400, initialY: number = 100, initialScale: number = 0.5, initialFontSize: string = '48px') {
     this.gunTurret.setVisible(true);
-    this.puzzleShip = this.scene.add.container(SCREEN_CENTER_X, PS_START_Y);
+    this.puzzleShip = this.scene.add.container(initialX, initialY);
     const psSprite = this.scene.add.sprite(0, 0, 'enemy', 0);
-    psSprite.setScale(0.5);
+    psSprite.setScale(initialScale);
     this.puzzleShip.add(psSprite);
     this.puzzleShip.setDepth(10);
     this.scene.physics.world.enable(this.puzzleShip);
 
-    this.puzzleText = this.scene.add.text(0, -50, puzzle, { fontSize: PUZZLE_FONT_SIZE, color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.puzzleText = this.scene.add.text(0, -60, puzzle, { fontSize: initialFontSize, color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.puzzleText.setScale(initialScale);
     this.puzzleShip.add(this.puzzleText);
 
-    this.psTween = this.scene.tweens.add({
+    // Entry tweens
+    this.scene.tweens.add({
       targets: this.puzzleShip,
-      x: { from: SCREEN_CENTER_X - 100, to: SCREEN_CENTER_X + 100, duration: 2000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
-      y: { from: PS_START_Y, to: PS_START_Y + 50, duration: 3000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1, offset: 1000 },
-      duration: 4000,
-      repeat: -1
+      x: SCREEN_CENTER_X - 100,
+      y: PS_START_Y,
+      duration: 1000,
+      ease: 'Power2'
+    });
+    this.scene.tweens.add({
+      targets: psSprite,
+      scale: 0.5,
+      duration: 1000
+    });
+    this.scene.tweens.add({
+      targets: this.puzzleText,
+      scale: 1,
+      duration: 1000,
+      onComplete: () => {
+        this.psTween = this.scene.tweens.add({
+          targets: this.puzzleShip,
+          x: { from: SCREEN_CENTER_X - 100, to: SCREEN_CENTER_X + 100, duration: 2000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1 },
+          y: { from: PS_START_Y, to: PS_START_Y + 50, duration: 3000, ease: 'Sine.easeInOut', yoyo: true, repeat: -1, offset: 1000 },
+          duration: 4000,
+          repeat: -1
+        });
+      }
     });
 
     this.inputContainer = this.scene.add.container(GT_X + 200, GT_Y - 120);

@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { getActivePlayer } from '../utils/player';
-import { TIMER_DELAY_MS } from '../constants';
+import { TIMER_DELAY_MS, GAME_LENGTH } from '../constants';
 import { PuzzleManager } from '../managers/PuzzleManager';
 import { UIManager } from '../managers/UIManager';
 import { GameMechanics } from '../managers/GameMechanics';
@@ -11,6 +11,7 @@ export default class PlayScene extends Phaser.Scene {
   uiManager!: UIManager;
   gameMechanics!: GameMechanics;
   inputHandler!: InputHandler;
+  reserveShips!: Phaser.GameObjects.Sprite[];
   stars!: Phaser.GameObjects.Blitter;
   starfieldHeight!: number;
 
@@ -58,6 +59,23 @@ export default class PlayScene extends Phaser.Scene {
     this.uiManager.createGunTurret();
     this.uiManager.createProgress();
     this.uiManager.createLives();
+
+    this.reserveShips = [];
+    for (let i = 0; i < GAME_LENGTH - 1; i++) {
+      const x = Phaser.Math.Between(100, 700);
+      const y = Phaser.Math.Between(50, 100);
+      const ship = this.add.sprite(x, y, 'enemy', 0);
+      ship.setScale(0.2);
+      ship.setAlpha(0.5);
+      this.tweens.add({
+        targets: ship,
+        x: x + 20,
+        duration: 2000,
+        yoyo: true,
+        repeat: -1
+      });
+      this.reserveShips.push(ship);
+    }
 
     this.gameMechanics = new GameMechanics(this, this.uiManager, (deltas, presented, times, correctness) => {
       this.scene.start('SummaryScene', { deltas, presented, times, correctness });

@@ -113,7 +113,19 @@ export class InputHandler {
 
   presentPuzzle() {
     const puzzle = this.puzzleManager.getCurrentPuzzle();
-    this.uiManager.presentPuzzle(puzzle.puzzle);
+    let initialX = 400;
+    let initialY = 100;
+    let initialScale = 0.5;
+    const initialFontSize = '36px';
+    if ((this.scene as any).reserveShips && (this.scene as any).reserveShips.length > 0) {
+      const randomIndex = Phaser.Math.Between(0, (this.scene as any).reserveShips.length - 1);
+      const ship = (this.scene as any).reserveShips.splice(randomIndex, 1)[0];
+      initialX = ship.x;
+      initialY = ship.y;
+      initialScale = 0.2;
+      ship.destroy();
+    }
+    this.uiManager.presentPuzzle(puzzle.puzzle, initialX, initialY, initialScale, initialFontSize);
     this.answer = '';
     this.startTime = Date.now();
     this.uiManager.startTimer(() => this.onTimeout());
