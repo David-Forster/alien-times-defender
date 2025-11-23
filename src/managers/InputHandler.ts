@@ -45,6 +45,7 @@ export class InputHandler {
     this.removeInput();
     this.uiManager.stopTimer();
     const timeTaken = (Date.now() - this.startTime) / 1000;
+    this.uiManager.updateTimerBarColor(this.puzzleManager.getTimeTakenColor(timeTaken));
     const puzzle = this.puzzleManager.getCurrentPuzzle();
     const [a, b] = puzzle.puzzle.split(' x ').map(Number);
     const correct = a * b;
@@ -71,6 +72,7 @@ export class InputHandler {
   onTimeout() {
     this.removeInput();
     const timeTaken = TIMEOUT_TIME;
+    this.uiManager.updateTimerBarColor(this.puzzleManager.getTimeTakenColor(timeTaken));
     const isCorrect = false;
     const puzzle = this.puzzleManager.getCurrentPuzzle();
     const delta = this.puzzleManager.updateRating(puzzle.puzzle, isCorrect, timeTaken);

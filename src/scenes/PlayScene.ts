@@ -87,6 +87,11 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   update() {
+    if (this.uiManager && this.uiManager.timerEvent && this.uiManager.timerEvent.getRemaining() > 0) {
+      const elapsed = (Date.now() - this.inputHandler.startTime) / 1000;
+      const color = this.puzzleManager.getTimeTakenColor(elapsed);
+      this.uiManager.updateTimerBarColor(color);
+    }
     if (this.uiManager && this.uiManager.timerEvent && this.uiManager.timerEvent.getRemaining() < TIMER_DELAY_MS * 0.5) {
       this.uiManager.updatePuzzleShipPosition(this.uiManager.timerEvent);
     }

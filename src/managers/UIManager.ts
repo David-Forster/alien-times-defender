@@ -159,21 +159,19 @@ export class UIManager {
     // Hide input panel and text
     this.inputContainer.setVisible(false);
 
-    this.feedbackContainer = this.scene.add.container(SCREEN_CENTER_X, y);
-    const panelSprite = this.scene.add.sprite(0, 0, 'feedback_panel').setScale(2); // Double the size
+    this.feedbackContainer = this.scene.add.container(SCREEN_CENTER_X + 150, y + 170);
     // Split text: assume format "Overheated!! Correct sequence was: X"
     const parts = text.split(' Correct sequence was: ');
     const topText = parts[0] + ' Correct sequence was:';
     const bottomText = parts[1];
-    const topTextObj = this.scene.add.text(0, -30, topText, { fontSize: '20px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
-    const bottomTextObj = this.scene.add.text(0, 20, bottomText, { fontSize: '48px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
-    this.feedbackContainer.add(panelSprite);
+    const topTextObj = this.scene.add.text(0, -30, topText, { fontSize: '16px', color: '#ff0000', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    const bottomTextObj = this.scene.add.text(0, 20, bottomText, { fontSize: '64px', color: '#ff6666', fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.feedbackContainer.add(topTextObj);
     this.feedbackContainer.add(bottomTextObj);
     this.feedbackContainer.setDepth(15);
     this.feedbackAdded = true;
 
-    // Blink the panel a couple of times quickly
+    // Blink the feedback a couple of times quickly
     this.scene.tweens.add({
       targets: this.feedbackContainer,
       alpha: 0,
@@ -189,7 +187,7 @@ export class UIManager {
     const displayText = isCorrect ? `+${Math.abs(delta)}` : `-${delta}`;
     const color = isCorrect ? '#00ff00' : '#ff0000';
     const targetY = isCorrect ? y - 50 : y + 50;
-    const deltaText = this.scene.add.text(x, y, displayText, { fontSize: '32px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
+    const deltaText = this.scene.add.text(x, y, displayText, { fontSize: '64px', color, fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.scene.tweens.add({
       targets: deltaText,
       x: x + 40,
@@ -237,5 +235,15 @@ export class UIManager {
       ease: 'Linear',
       onComplete
     });
+  }
+  updateTimerBarColor(color: string) {
+    const colorMap: { [key: string]: number } = {
+      'green': 0x00ff00,
+      'lime': 0x00ff00,
+      'yellow': 0xffff00,
+      'orange': 0xffa500,
+      'red': 0xff0000
+    };
+    this.timerBar.setFillStyle(colorMap[color] || 0xffffff);
   }
 }

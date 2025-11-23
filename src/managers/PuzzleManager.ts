@@ -1,4 +1,4 @@
-import { initialTable, GAME_LENGTH, EARLY_SESSION_THRESHOLD, MIN_RATING, MAX_RATING, TIMEOUT_TIME } from '../constants';
+import { initialTable, GAME_LENGTH, EARLY_SESSION_THRESHOLD, MIN_RATING, MAX_RATING, TIMEOUT_TIME, TIME_THRESHOLDS, TimeThreshold } from '../constants';
 import { getPlayerDataKey, initializePlayerData } from '../utils/player';
 
 export type PuzzleEntry = { puzzle: string; rating: number; userRating: number };
@@ -91,12 +91,16 @@ export class PuzzleManager {
     return selected;
   }
 
+  private getTimeThreshold(timeTaken: number): TimeThreshold {
+    return TIME_THRESHOLDS.find(threshold => timeTaken <= threshold.maxTime) || TIME_THRESHOLDS[TIME_THRESHOLDS.length - 1];
+  }
+
   getCorrectDelta(timeTaken: number): number {
-    if (timeTaken <= 2.0) return -8;
-    if (timeTaken <= 3.0) return -6;
-    if (timeTaken <= 5.0) return -4;
-    if (timeTaken <= 10.0) return -2;
-    return -1;
+    return this.getTimeThreshold(timeTaken).delta;
+  }
+
+  getTimeTakenColor(timeTaken: number): string {
+    return this.getTimeThreshold(timeTaken).color;
   }
 
   getIncorrectDelta(currentRating: number): number {

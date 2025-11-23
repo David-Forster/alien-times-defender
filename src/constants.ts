@@ -135,13 +135,28 @@ export const FEEDBACK_FONT_SIZE = '24px';
 export const SCREEN_CENTER_X = 400;
 export const PUZZLE_Y = 200;
 export const INPUT_Y = 300;
-export const TIMER_BAR_Y = 30;
-export const FEEDBACK_Y = 400;
+export const TIMER_BAR_Y = 600;
+export const FEEDBACK_Y = 500;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
 export const CORRECT_FEEDBACK_DELAY_MS = 1500;
 export const INCORRECT_FEEDBACK_DELAY_MS = 3000;
 export const TIMEOUT_TIME = 25;
+
+// Time-based performance thresholds (ordered by increasing time)
+export interface TimeThreshold {
+  maxTime: number;    // Maximum time in seconds for this threshold
+  delta: number;      // Rating delta for correct answers
+  color: string;      // Timer bar color
+}
+
+export const TIME_THRESHOLDS: TimeThreshold[] = [
+  { maxTime: 2.0, delta: -8, color: 'green' },
+  { maxTime: 3.0, delta: -6, color: 'lime' },
+  { maxTime: 5.0, delta: -4, color: 'yellow' },
+  { maxTime: 10.0, delta: -2, color: 'orange' },
+  { maxTime: Infinity, delta: -1, color: 'red' }  // Default for times > 10.0
+];
 
 // Mastery constants
 export const MASTERY_TARGET = 100;
