@@ -40,59 +40,55 @@ The game is built as a static web application that runs in any modern browser.
 
 3. The game runs offline and saves progress locally.
 
-## Option 2: Desktop App with Electron (For Native Experience)
+## Option 2: Desktop App with Tauri (For Native Experience)
 
 For a more native desktop application experience.
 
 ### Prerequisites
 
-1. Install dependencies (includes Electron):
+1. Install Node.js dependencies:
    ```bash
    pnpm install
    ```
 
+2. Install Rust (if not already installed): Follow instructions at https://rustup.rs/
+
+3. Install Tauri CLI:
+   ```bash
+   cargo install tauri-cli
+   ```
+
 ### Building for Distribution
 
-1. Build the web assets:
+1. Build the Tauri app:
    ```bash
-   pnpm build
+   tauri build
    ```
 
-2. Build the Electron app:
-   ```bash
-   pnpm electron:build
-   ```
+2. Installers will be created in `src-tauri/target/release/bundle/` folder.
 
-3. Installers will be created in `dist-electron/` folder.
+### Development Testing
+
+To test the Tauri app during development:
+
+```bash
+tauri dev
+```
 
 ### Sharing the Game
 
 Share the appropriate installer file:
 - macOS: `.dmg` file
-- Windows: `.exe` installer
+- Windows: `.msi` or `.exe` installer
 - Linux: `.AppImage` file
 
 ### Running the Game
 
 Run the installer and launch the app like any other desktop application.
 
-### Development Testing
-
-To test Electron during development:
-
-1. Start the Vite dev server:
-   ```bash
-   pnpm dev
-   ```
-
-2. In another terminal, run Electron:
-   ```bash
-   pnpm electron
-   ```
-
 ## Notes
 
 - The static web build is the simplest and most portable option.
-- Electron provides a native app feel but increases file size.
+- Tauri provides a native app feel but increases file size.
 - Both options preserve local storage for game progress.
 - The game requires no internet connection once loaded.
