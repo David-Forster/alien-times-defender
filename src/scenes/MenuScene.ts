@@ -47,7 +47,8 @@ export default class MenuScene extends Phaser.Scene {
          },
          () => dialogManager.closeDialog()
        ),
-       onShowAbout: () => dialogManager.showAboutDialog(() => dialogManager.closeDialog())
+       onShowAbout: () => dialogManager.showAboutDialog(() => dialogManager.closeDialog()),
+       onShowManage: () => this.scene.start('ManagePlayersScene')
      });
 
      uiManager.createUI();

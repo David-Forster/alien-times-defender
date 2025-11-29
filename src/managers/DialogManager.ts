@@ -13,7 +13,8 @@ export class DialogManager {
   private navigationManager: NavigationManager;
   private dialogElements: IDialogElement[] = [];
   private dialogFocusIndex = 0;
-  private modal: Phaser.GameObjects.Rectangle | null = null;
+  private modal: Phaser.GameObjects.Graphics | null = null;
+  private background: Phaser.GameObjects.Rectangle | null = null;
   private input: Phaser.GameObjects.DOMElement | null = null;
   private confirmBtn: Phaser.GameObjects.Text | null = null;
   private cancelBtn: Phaser.GameObjects.Text | null = null;
@@ -35,7 +36,15 @@ export class DialogManager {
     this.onCancel = onCancel;
     this.errorText = null;
 
-    this.modal = this.scene.add.rectangle(400, 225, 400, 200, 0x000000, 0.8).setDepth(10).setInteractive();
+    this.background = this.scene.add.rectangle(this.scene.scale.width / 2, this.scene.scale.height / 2, this.scene.scale.width, this.scene.scale.height, 0x000000, 0.5).setDepth(9).setInteractive();
+
+    this.modal = this.scene.add.graphics().setDepth(10);
+    this.modal.fillStyle(0x000000, 0.8);
+    this.modal.fillRect(0, 0, 400, 200);
+    this.modal.lineStyle(2, 0xffffff);
+    this.modal.strokeRect(0, 0, 400, 200);
+    this.modal.setPosition(200, 125);
+    this.modal.setInteractive(new Phaser.Geom.Rectangle(0, 0, 400, 200), Phaser.Geom.Rectangle.Contains);
     this.titleText = this.scene.add.text(400, 145, 'Enter Player Name', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
 
     this.input = this.scene.add.dom(400, 205, 'input', {
@@ -68,11 +77,19 @@ export class DialogManager {
   public showAboutDialog(onClose: () => void) {
     this.onCancel = onClose;
 
-    this.modal = this.scene.add.rectangle(400, 300, 600, 450, 0x000000, 0.8).setDepth(10).setInteractive();
-    this.titleText = this.scene.add.text(400, 100, 'About This Game: Reducing Cognitive Load Through Mastery', { fontSize: '18px', color: '#ffffff', fontFamily: 'Orbitron', fontStyle: 'bold' , align: 'center', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
+    this.background = this.scene.add.rectangle(this.scene.scale.width / 2, this.scene.scale.height / 2, this.scene.scale.width, this.scene.scale.height, 0x000000, 0.5).setDepth(9).setInteractive();
+
+    this.modal = this.scene.add.graphics().setDepth(10);
+    this.modal.fillStyle(0x000000, 0.8);
+    this.modal.fillRect(0, 0, 600, 450);
+    this.modal.lineStyle(2, 0xffffff);
+    this.modal.strokeRect(0, 0, 600, 450);
+    this.modal.setPosition(100, 75);
+    this.modal.setInteractive(new Phaser.Geom.Rectangle(0, 0, 600, 450), Phaser.Geom.Rectangle.Contains);
+    this.titleText = this.scene.add.text(400, 120, 'About This Game: Reducing Cognitive Load Through Mastery', { fontSize: '18px', color: '#ffffff', fontFamily: 'Orbitron', fontStyle: 'bold' , align: 'center', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
 
     const description = 'Alien X Defender gamifies multiplication table practice (2x2 to 12x12) to build automaticity—effortless recall of facts like "7 x 8 = 56." Research shows basic facts initially consume limited "slots" in working memory, overloading the brain during complex problem-solving. By adapting puzzles to your weaknesses, rewarding quick accuracy, and tracking progress via competency ratings, Alien X Defender automates these facts into long-term memory, freeing mental space for deeper math reasoning and reducing errors.';
-    this.aboutText = this.scene.add.text(400, 240, description,{ fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron', align: 'left', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
+    this.aboutText = this.scene.add.text(400, 260, description,{ fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron', align: 'left', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
 
     const reference = 'Reference: Ding, Y., et al. (2017). "Working memory load and automaticity in relation to mental multiplication." The Journal of Educational Research, 110(5), 532-540.';
     this.referenceText = this.scene.add.text(400, 380, reference, { fontSize: '12px', color: '#ffffff', fontFamily: 'Orbitron', align: 'center', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
@@ -92,8 +109,14 @@ export class DialogManager {
   }
 
   private handleConfirm() {
-    const name = (this.input!.node as HTMLInputElement).value.trim();
-    const success = this.onConfirm(name);
+    let success = false;
+    if (this.input) {
+      const name = (this.input.node as HTMLInputElement).value.trim();
+      success = this.onConfirm(name);
+    } else {
+      // For dialogs without input (e.g., delete confirmation)
+      success = (this.onConfirm as any)();
+    }
     if (success) {
       this.closeDialog();
     }
@@ -109,12 +132,90 @@ export class DialogManager {
     this.closeDialog();
   }
 
+  public showRenameDialog(onConfirm: (name: string) => boolean, onCancel: () => void, currentName: string) {
+    this.onConfirm = onConfirm;
+    this.onCancel = onCancel;
+    this.errorText = null;
+
+    this.background = this.scene.add.rectangle(this.scene.scale.width / 2, this.scene.scale.height / 2, this.scene.scale.width, this.scene.scale.height, 0x000000, 0.5).setDepth(9).setInteractive();
+
+    this.modal = this.scene.add.graphics().setDepth(10);
+    this.modal.fillStyle(0x000000, 0.8);
+    this.modal.fillRect(0, 0, 400, 200);
+    this.modal.lineStyle(2, 0xffffff);
+    this.modal.strokeRect(0, 0, 400, 200);
+    this.modal.setPosition(200, 125);
+    this.modal.setInteractive(new Phaser.Geom.Rectangle(0, 0, 400, 200), Phaser.Geom.Rectangle.Contains);
+    this.titleText = this.scene.add.text(400, 145, 'Rename Player', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
+
+    this.input = this.scene.add.dom(400, 205, 'input', {
+      type: 'text',
+      value: currentName,
+      maxLength: 20,
+      style: 'width: 300px; font-size: 18px; padding: 8px; text-align: center;'
+    }).setDepth(11);
+
+    this.confirmBtn = this.scene.add.text(340, 265, 'OK', { fontSize: '20px', color: '#00ff00', fontFamily: 'Orbitron' })
+      .setOrigin(0.5).setInteractive().setDepth(11)
+      .on('pointerdown', () => this.handleConfirm());
+
+    this.cancelBtn = this.scene.add.text(460, 265, 'Cancel', { fontSize: '20px', color: '#ff0000', fontFamily: 'Orbitron' })
+      .setOrigin(0.5).setInteractive().setDepth(11)
+      .on('pointerdown', () => this.handleCancel());
+
+    this.dialogElements = [
+      { obj: this.input, type: 'input', action: () => {} },
+      { obj: this.confirmBtn, type: 'ok', action: () => this.handleConfirm() },
+      { obj: this.cancelBtn, type: 'cancel', action: () => this.handleCancel() }
+    ];
+
+    this.dialogFocusIndex = 0;
+    this.highlightDialog();
+
+    this.navigationManager.openDialog(this.dialogElements, () => this.closeDialog());
+  }
+
+  public showDeleteConfirmationDialog(onConfirm: () => void, onCancel: () => void, playerName: string) {
+    this.onConfirm = () => { onConfirm(); return true; };
+    this.onCancel = onCancel;
+
+    this.background = this.scene.add.rectangle(this.scene.scale.width / 2, this.scene.scale.height / 2, this.scene.scale.width, this.scene.scale.height, 0x000000, 0.5).setDepth(9).setInteractive();
+
+    this.modal = this.scene.add.graphics().setDepth(10);
+    this.modal.fillStyle(0x000000, 0.8);
+    this.modal.fillRect(0, 0, 400, 150);
+    this.modal.lineStyle(2, 0xffffff);
+    this.modal.strokeRect(0, 0, 400, 150);
+    this.modal.setPosition(200, 150);
+    this.modal.setInteractive(new Phaser.Geom.Rectangle(0, 0, 400, 150), Phaser.Geom.Rectangle.Contains);
+    this.titleText = this.scene.add.text(400, 165, `Delete ${playerName}?`, { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
+
+    this.confirmBtn = this.scene.add.text(340, 215, 'Yes', { fontSize: '20px', color: '#00ff00', fontFamily: 'Orbitron' })
+      .setOrigin(0.5).setInteractive().setDepth(11)
+      .on('pointerdown', () => this.handleConfirm());
+
+    this.cancelBtn = this.scene.add.text(460, 215, 'No', { fontSize: '20px', color: '#ff0000', fontFamily: 'Orbitron' })
+      .setOrigin(0.5).setInteractive().setDepth(11)
+      .on('pointerdown', () => this.handleCancel());
+
+    this.dialogElements = [
+      { obj: this.confirmBtn, type: 'ok', action: () => this.handleConfirm() },
+      { obj: this.cancelBtn, type: 'cancel', action: () => this.handleCancel() }
+    ];
+
+    this.dialogFocusIndex = 0;
+    this.highlightDialog();
+
+    this.navigationManager.openDialog(this.dialogElements, () => this.closeDialog());
+  }
+
   public showError(message: string) {
     if (this.errorText) this.errorText.destroy();
     this.errorText = this.scene.add.text(400, 275, message, { fontSize: '14px', color: '#ff0000', fontFamily: 'Orbitron' }).setOrigin(0.5).setDepth(11);
   }
 
   public closeDialog() {
+    if (this.background) this.background.destroy();
     if (this.modal) this.modal.destroy();
     if (this.input) this.input.destroy();
     if (this.confirmBtn) this.confirmBtn.destroy();

@@ -15,6 +15,7 @@ export class MenuUIManager implements IUIManager {
   private onStartGame: () => void;
   private onAddPlayer: () => void;
   private onShowAbout: () => void;
+  private onShowManage: () => void;
   private focusableElements: Array<{ obj: Phaser.GameObjects.GameObject, type: string, action: () => void, originalColor?: number | string }> = [];
   private scrollContainer: Phaser.GameObjects.Container;
   private sortedPlayers: IPlayerData[] = [];
@@ -23,12 +24,13 @@ export class MenuUIManager implements IUIManager {
   private buttonHeight = 70;
   private containerY = 145;
 
-  constructor(scene: Phaser.Scene, callbacks: { onSetActivePlayer: (name: string) => void; onStartGame: () => void; onAddPlayer: () => void; onShowAbout: () => void }) {
+  constructor(scene: Phaser.Scene, callbacks: { onSetActivePlayer: (name: string) => void; onStartGame: () => void; onAddPlayer: () => void; onShowAbout: () => void; onShowManage: () => void }) {
     this.scene = scene;
     this.onSetActivePlayer = callbacks.onSetActivePlayer;
     this.onStartGame = callbacks.onStartGame;
     this.onAddPlayer = callbacks.onAddPlayer;
     this.onShowAbout = callbacks.onShowAbout;
+    this.onShowManage = callbacks.onShowManage;
   }
 
   createUI() {
@@ -71,6 +73,13 @@ export class MenuUIManager implements IUIManager {
       .on('pointerdown', () => this.onShowAbout());
     const aboutText = this.scene.add.text(250, 580, 'About', { fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.focusableElements.push({ obj: aboutBtn, type: 'button', action: () => this.onShowAbout(), originalColor: 0x000000 });
+
+    // Manage button
+    const manageBtn = this.scene.add.rectangle(380, 580, 120, 20, 0x333333)
+      .setInteractive()
+      .on('pointerdown', () => this.onShowManage());
+    const manageText = this.scene.add.text(380, 580, 'Manage', { fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.focusableElements.push({ obj: manageBtn, type: 'button', action: () => this.onShowManage(), originalColor: 0x000000 });
 
     // Stats and start button if active player
     const activePlayer = getActivePlayer();
