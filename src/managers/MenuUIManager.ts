@@ -14,6 +14,7 @@ export class MenuUIManager implements IUIManager {
   private onSetActivePlayer: (name: string) => void;
   private onStartGame: () => void;
   private onAddPlayer: () => void;
+  private onShowAbout: () => void;
   private focusableElements: Array<{ obj: Phaser.GameObjects.GameObject, type: string, action: () => void, originalColor?: number | string }> = [];
   private scrollContainer: Phaser.GameObjects.Container;
   private sortedPlayers: IPlayerData[] = [];
@@ -22,11 +23,12 @@ export class MenuUIManager implements IUIManager {
   private buttonHeight = 70;
   private containerY = 145;
 
-  constructor(scene: Phaser.Scene, callbacks: { onSetActivePlayer: (name: string) => void; onStartGame: () => void; onAddPlayer: () => void }) {
+  constructor(scene: Phaser.Scene, callbacks: { onSetActivePlayer: (name: string) => void; onStartGame: () => void; onAddPlayer: () => void; onShowAbout: () => void }) {
     this.scene = scene;
     this.onSetActivePlayer = callbacks.onSetActivePlayer;
     this.onStartGame = callbacks.onStartGame;
     this.onAddPlayer = callbacks.onAddPlayer;
+    this.onShowAbout = callbacks.onShowAbout;
   }
 
   createUI() {
@@ -34,9 +36,9 @@ export class MenuUIManager implements IUIManager {
     this.loadAndSortPlayers();
 
     // Title
-    this.scene.add.text(270, 25, 'Alien', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
-    this.scene.add.text(365, 20, '×', { fontSize: '100px', color: '#ff0000', fontFamily: 'Orbitron' }).setOrigin(0.5);
-    this.scene.add.text(500, 25, 'Defender', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.scene.add.text(280, 40, 'Alien', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.scene.add.text(365, 35, '×', { fontSize: '150px', color: '#ff0000', fontFamily: 'Kalam' }).setOrigin(0.5);
+    this.scene.add.text(495 , 40, 'Defender', { fontSize: '36px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
 
     // Leaderboard title
     this.scene.add.text(400, 85, 'Leaderboard', { fontSize: '24px', color: '#ffff00', fontFamily: 'Orbitron' }).setOrigin(0.5);
@@ -62,6 +64,13 @@ export class MenuUIManager implements IUIManager {
       .on('pointerdown', () => this.onAddPlayer());
     const addText = this.scene.add.text(250, 525, '+ Add New Player', { fontSize: '20px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
     this.focusableElements.push({ obj: addBtn, type: 'add', action: () => this.onAddPlayer(), originalColor: 0x0066cc });
+
+    // About button
+    const aboutBtn = this.scene.add.rectangle(250, 580, 120, 20, 0x333333)
+      .setInteractive()
+      .on('pointerdown', () => this.onShowAbout());
+    const aboutText = this.scene.add.text(250, 580, 'About', { fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron' }).setOrigin(0.5);
+    this.focusableElements.push({ obj: aboutBtn, type: 'button', action: () => this.onShowAbout(), originalColor: 0x000000 });
 
     // Stats and start button if active player
     const activePlayer = getActivePlayer();

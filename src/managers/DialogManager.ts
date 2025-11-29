@@ -19,6 +19,9 @@ export class DialogManager {
   private cancelBtn: Phaser.GameObjects.Text | null = null;
   private titleText: Phaser.GameObjects.Text | null = null;
   private errorText: Phaser.GameObjects.Text | null = null;
+  private aboutText: Phaser.GameObjects.Text | null = null;
+  private referenceText: Phaser.GameObjects.Text | null = null;
+  private closeBtn: Phaser.GameObjects.Text | null = null;
   private onConfirm: (name: string) => boolean = () => false;
   private onCancel: () => void = () => {};
 
@@ -62,6 +65,32 @@ export class DialogManager {
     this.navigationManager.openDialog(this.dialogElements, () => this.closeDialog());
   }
 
+  public showAboutDialog(onClose: () => void) {
+    this.onCancel = onClose;
+
+    this.modal = this.scene.add.rectangle(400, 300, 600, 450, 0x000000, 0.8).setDepth(10).setInteractive();
+    this.titleText = this.scene.add.text(400, 100, 'About This Game: Reducing Cognitive Load Through Mastery', { fontSize: '18px', color: '#ffffff', fontFamily: 'Orbitron', fontStyle: 'bold' , align: 'center', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
+
+    const description = 'Alien X Defender gamifies multiplication table practice (2x2 to 12x12) to build automaticity—effortless recall of facts like "7 x 8 = 56." Research shows basic facts initially consume limited "slots" in working memory, overloading the brain during complex problem-solving. By adapting puzzles to your weaknesses, rewarding quick accuracy, and tracking progress via competency ratings, Alien X Defender automates these facts into long-term memory, freeing mental space for deeper math reasoning and reducing errors.';
+    this.aboutText = this.scene.add.text(400, 240, description,{ fontSize: '16px', color: '#ffffff', fontFamily: 'Orbitron', align: 'left', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
+
+    const reference = 'Reference: Ding, Y., et al. (2017). "Working memory load and automaticity in relation to mental multiplication." The Journal of Educational Research, 110(5), 532-540.';
+    this.referenceText = this.scene.add.text(400, 380, reference, { fontSize: '12px', color: '#ffffff', fontFamily: 'Orbitron', align: 'center', wordWrap: { width: 500 } }).setOrigin(0.5).setDepth(11);
+
+    this.closeBtn = this.scene.add.text(400, 470, 'Close', { fontSize: '20px', color: '#00ff00', fontFamily: 'Orbitron' })
+      .setOrigin(0.5).setInteractive().setDepth(11)
+      .on('pointerdown', () => this.handleClose());
+
+    this.dialogElements = [
+      { obj: this.closeBtn, type: 'ok', action: () => this.handleClose() }
+    ];
+
+    this.dialogFocusIndex = 0;
+    this.highlightDialog();
+
+    this.navigationManager.openDialog(this.dialogElements, () => this.closeDialog());
+  }
+
   private handleConfirm() {
     const name = (this.input!.node as HTMLInputElement).value.trim();
     const success = this.onConfirm(name);
@@ -71,6 +100,11 @@ export class DialogManager {
   }
 
   private handleCancel() {
+    this.onCancel();
+    this.closeDialog();
+  }
+
+  private handleClose() {
     this.onCancel();
     this.closeDialog();
   }
@@ -87,6 +121,9 @@ export class DialogManager {
     if (this.cancelBtn) this.cancelBtn.destroy();
     if (this.titleText) this.titleText.destroy();
     if (this.errorText) this.errorText.destroy();
+    if (this.aboutText) this.aboutText.destroy();
+    if (this.referenceText) this.referenceText.destroy();
+    if (this.closeBtn) this.closeBtn.destroy();
     this.dialogElements = [];
     this.navigationManager.closeDialog();
   }

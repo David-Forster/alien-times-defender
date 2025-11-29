@@ -30,6 +30,8 @@ export default class MenuScene extends Phaser.Scene {
      this.stars.create(0, 0);
      this.stars.create(0, -this.starfieldHeight);
 
+     let dialogManager: DialogManager;
+
      const uiManager = new MenuUIManager(this, {
        onSetActivePlayer: (name: string) => { setActivePlayer(name); this.scene.restart(); },
        onStartGame: () => this.scene.start('PlayScene'),
@@ -44,7 +46,8 @@ export default class MenuScene extends Phaser.Scene {
            }
          },
          () => dialogManager.closeDialog()
-       )
+       ),
+       onShowAbout: () => dialogManager.showAboutDialog(() => dialogManager.closeDialog())
      });
 
      uiManager.createUI();
@@ -54,7 +57,7 @@ export default class MenuScene extends Phaser.Scene {
      navigationManager.setCurrentFocusIndex(0);
      navigationManager.updateHighlight();
 
-     const dialogManager = new DialogManager(this, navigationManager);
+     dialogManager = new DialogManager(this, navigationManager);
 
      this.input.on('wheel', (pointer, gameObjects, deltaX, deltaY) => {
        if (deltaY > 0) uiManager.scrollDown();
