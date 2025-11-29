@@ -135,7 +135,7 @@ export const FEEDBACK_FONT_SIZE = '24px';
 export const SCREEN_CENTER_X = 400;
 export const PUZZLE_Y = 200;
 export const INPUT_Y = 300;
-export const TIMER_BAR_Y = 600;
+export const TIMER_BAR_Y = 570;
 export const FEEDBACK_Y = 500;
 export const MIN_RATING = 1;
 export const MAX_RATING = 100;
@@ -165,7 +165,7 @@ export const MASTERY_THRESHOLD_ACCURACY = 0.98; // 98% correct in recent history
 
 // UX Improvement Constants
 export const GT_X = 400; // Gun Turret X position (center)
-export const GT_Y = 550; // Gun Turret Y position (bottom)
+export const GT_Y = 530; // Gun Turret Y position (bottom)
 export const PS_START_Y = 100; // Puzzle Ship initial Y
 export const PS_MOVE_SPEED = 50; // pixels per second for erratic movement
 export const MISSILE_SPEED = 1200; // pixels per second

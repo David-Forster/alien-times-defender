@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { calculateMastery } from '../utils/mastery';
 import { getPlayerDataKey, getActivePlayer } from '../utils/player';
+import { getRandomStarfieldPath } from '../utils/starfieldSelector';
 
 export default class SummaryScene extends Phaser.Scene {
    constructor() {
@@ -11,7 +12,8 @@ export default class SummaryScene extends Phaser.Scene {
    starfieldHeight!: number;
 
    preload() {
-     this.load.image('starfield', '/assets/starfield.avif');
+     const path = '/' + getRandomStarfieldPath();
+     this.load.image('starfield', path);
    }
 
    create(data: { deltas: number[]; presented: Array<{ puzzle: string; rating: number; userRating: number }>; times: number[]; correctness: boolean[] }) {

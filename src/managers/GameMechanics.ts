@@ -66,6 +66,7 @@ export class GameMechanics {
     console.log('puzzleShip', puzzleShip);
     console.log('delta', delta);
     missile.destroy();
+    (this.scene as any).explosionSound.play();
     this.destroyPuzzleShip(puzzleShip as Phaser.GameObjects.Container, this.lastTimeTaken);
     this.uiManager.showDeltaText(delta, this.uiManager.puzzleShip.x + 130, this.uiManager.puzzleShip.y);
   }

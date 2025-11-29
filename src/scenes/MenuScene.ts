@@ -3,6 +3,7 @@ import { getPlayerList, addPlayer, setActivePlayer } from '../utils/player';
 import { MenuUIManager } from '../managers/MenuUIManager';
 import { NavigationManager } from '../managers/NavigationManager';
 import { DialogManager } from '../managers/DialogManager';
+import { getRandomStarfieldPath } from '../utils/starfieldSelector';
 
 export default class MenuScene extends Phaser.Scene {
    constructor() {
@@ -13,7 +14,8 @@ export default class MenuScene extends Phaser.Scene {
    starfieldHeight!: number;
 
    preload() {
-     this.load.image('starfield', '/assets/starfield.avif');
+     const path = '/' + getRandomStarfieldPath();
+     this.load.image('starfield', path);
    }
 
    create() {

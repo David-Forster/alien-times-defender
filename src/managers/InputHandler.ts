@@ -57,9 +57,11 @@ export class InputHandler {
     this.uiManager.stopPuzzleShipTween();
 
     if (isCorrect) {
+      (this.scene as any).correctAnswerSound.play();
       this.gameMechanics.fireMissile(this.uiManager.puzzleShip, timeTaken);
       this.gameMechanics.setupCollision(this.uiManager.puzzleShip, delta);
     } else {
+      (this.scene as any).incorrectAnswerSound.play();
       this.gameMechanics.explodeGunTurret();
       this.gameMechanics.loseLife(this.puzzleManager, this.uiManager);
       this.uiManager.showFeedback(`Overheated!! Correct sequence was: ${correct}`, '#ffffff', INPUT_Y);
@@ -92,6 +94,8 @@ export class InputHandler {
 
     this.uiManager.showDeltaText(delta, this.uiManager.puzzleShip.x + 100, this.uiManager.puzzleShip.y);
 
+    (this.scene as any).incorrectAnswerSound.play();
+
     this.scene.time.delayedCall(INCORRECT_FEEDBACK_DELAY_MS, this.nextPuzzle, [], this);
   }
 
@@ -104,6 +108,7 @@ export class InputHandler {
     if (hasNext && this.gameMechanics.lives > 0) {
       this.presentPuzzle();
     } else {
+      (this.scene as any).sessionEndSound.play();
       this.scene.scene.start('SummaryScene', {
         deltas: this.puzzleManager.deltas,
         presented: this.puzzleManager.puzzles.slice(0, this.puzzleManager.currentIndex),
@@ -132,5 +137,9 @@ export class InputHandler {
     this.startTime = Date.now();
     this.uiManager.startTimer(() => this.onTimeout());
     this.setupInput();
+
+    // Play puzzle presentation sound
+    (this.scene as any).puzzlePresentationSound.play();
+    (this.scene as any).timerWarningPlayed = false;
   }
 }
