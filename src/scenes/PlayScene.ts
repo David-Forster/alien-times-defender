@@ -136,6 +136,10 @@ export default class PlayScene extends Phaser.Scene {
   }
 
   playWarningBeat() {
+    if (!this.uiManager.timerEvent) {
+      this.warningActive = false;
+      return;
+    }
     const remaining = this.uiManager.timerEvent.getRemaining();
     if (remaining <= 0) {
       this.warningActive = false;
